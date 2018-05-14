@@ -28,6 +28,8 @@ TEST_METHOD(gaussian_test_for_matrix_N);
 TEST_METHOD(gaussian_test_for_matrix_eps_N);
 TEST_METHOD(gaussian_test_inverse);
 
+TEST_METHOD(functions_test);
+
 TEST_METHOD(lu_test_decompose);
 TEST_METHOD(lu_test_determenant);
 TEST_METHOD(lu_test_rank);
@@ -59,11 +61,11 @@ TEST_METHOD(newton_cotes_test_calculation_integral);
 TEST_METHOD(gauss_test_calculation_integral);
 
 TEST_METHOD(runge_kutta_calculation);
-TEST_METHOD(runge_kutta_calculation_opp);
 
 
 #define ENABLE_TESTS_GENERAL               0
 #define ENABLE_TESTS_GAUSSIAN              0
+#define ENABLE_TESTS_FUNCTIONS             1
 #define ENABLE_TESTS_LU                    0
 #define ENABLE_TESTS_LUP                   0
 #define ENABLE_TESTS_LUP_ONLY_SQUARE       0
@@ -79,7 +81,7 @@ TEST_METHOD(runge_kutta_calculation_opp);
 #define ENABLE_TESTS_HYBRID_NEWTON_SYSTEM  0
 #define ENABLE_TESTS_NEWTON_COTES_INTEGRAL 0
 #define ENABLE_TESTS_GAUSS_INTEGRAL        0
-#define ENABLE_TESTS_RUNGE_KUTTA           1
+#define ENABLE_TESTS_RUNGE_KUTTA           0
 
 
 void start_tests()
@@ -94,6 +96,11 @@ void start_tests()
     gaussian_test_for_matrix_eps_N();
     gaussian_test_inverse();
 #endif // ENABLE_TESTS_GAUSSIAN
+
+
+#if ENABLE_TESTS_FUNCTIONS
+    functions_test();
+#endif // ENABLE_TESTS_FUNCTIONS
 
 
 #if ENABLE_TESTS_LU
@@ -175,13 +182,13 @@ void start_tests()
 
 #if ENABLE_TESTS_RUNGE_KUTTA
     runge_kutta_calculation();
-    runge_kutta_calculation_opp();
 #endif // ENABLE_TESTS_RUNGE_KUTTA
 }
 
 } // namespace vv
 
 #include "general_tests.hpp"
+#include "cx_functions.hpp"
 #include "lu_decomposition.hpp"
 #include "lup_decomposition.hpp"
 #include "lupq_decomposition.hpp"
