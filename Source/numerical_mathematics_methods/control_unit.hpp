@@ -61,11 +61,17 @@ TEST_METHOD(newton_cotes_test_calculation_integral);
 TEST_METHOD(gauss_test_calculation_integral);
 
 TEST_METHOD(runge_kutta_calculation);
+TEST_METHOD(runge_kutta_calculation_opp);
+TEST_METHOD(runge_kutta_calculation_auto);
+TEST_METHOD(runge_kutta_calculation_auto_opp);
+TEST_METHOD(runge_kutta_calculation_auto_rtol);
+TEST_METHOD(runge_kutta_calculation_auto_rtol_opp);
+TEST_METHOD(do_runge_kutta_tests);
 
 
 #define ENABLE_TESTS_GENERAL               0
 #define ENABLE_TESTS_GAUSSIAN              0
-#define ENABLE_TESTS_FUNCTIONS             1
+#define ENABLE_TESTS_FUNCTIONS             0
 #define ENABLE_TESTS_LU                    0
 #define ENABLE_TESTS_LUP                   0
 #define ENABLE_TESTS_LUP_ONLY_SQUARE       0
@@ -81,7 +87,7 @@ TEST_METHOD(runge_kutta_calculation);
 #define ENABLE_TESTS_HYBRID_NEWTON_SYSTEM  0
 #define ENABLE_TESTS_NEWTON_COTES_INTEGRAL 0
 #define ENABLE_TESTS_GAUSS_INTEGRAL        0
-#define ENABLE_TESTS_RUNGE_KUTTA           0
+#define ENABLE_TESTS_RUNGE_KUTTA           1
 
 
 void start_tests()
@@ -181,7 +187,13 @@ void start_tests()
 #endif // ENABLE_TESTS_GAUSS_INTEGRAL
 
 #if ENABLE_TESTS_RUNGE_KUTTA
-    runge_kutta_calculation();
+    //runge_kutta_calculation();
+    //runge_kutta_calculation_opp();
+    //runge_kutta_calculation_auto();
+    //runge_kutta_calculation_auto_opp();
+    //runge_kutta_calculation_auto_rtol();
+    //runge_kutta_calculation_auto_rtol_opp();
+    do_runge_kutta_tests();
 #endif // ENABLE_TESTS_RUNGE_KUTTA
 }
 

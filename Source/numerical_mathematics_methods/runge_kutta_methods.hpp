@@ -5,10 +5,124 @@
 #include <vector>
 #include <tuple>
 #include <cassert>
+#include <fstream>
+#include <string>
+#include <string_view>
 
 #include "utils.hpp"
 #include "matrix.hpp"
 
+
+
+namespace utils
+{
+
+void out_data(const std::string& file_name, const std::string_view mode,
+              const std::string_view param, const std::string_view title,
+              const std::string_view x_label, const std::string_view y_label,
+              const std::vector<std::pair<double, double>>& data)
+{
+    if (data.empty())
+    {
+        std::cout << "ERROR: empty data to process for file " << file_name << ".\n";
+        return;
+    }
+
+    std::ofstream out_file(file_name);
+    out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
+    for (const auto [x, y] : data)
+    {
+        out_file << x << ' ' << y << '\n';
+    }
+}
+
+
+void out_data(const std::string& file_name, const std::string_view mode,
+              const std::string_view param, const std::string_view title,
+              const std::string_view x_label, const std::string_view y_label,
+              const std::vector<std::pair<double, double>>& data_1,
+              const std::vector<std::pair<double, double>>& data_2)
+{
+    if (data_1.empty() || data_2.empty())
+    {
+        std::cout << "ERROR: empty data to process for file " << file_name << ".\n";
+        return;
+    }
+
+    std::ofstream out_file(file_name);
+    out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
+    for (const auto [x, y] : data_1)
+    {
+        out_file << x << ' ' << y << '\n';
+    }
+    out_file << "#\n";
+    for (const auto [x, y] : data_2)
+    {
+        out_file << x << ' ' << y << '\n';
+    }
+}
+
+
+void out_data(const std::string& file_name, const std::string_view mode,
+              const std::string_view param, const std::string_view title,
+              const std::string_view x_label, const std::string_view y_label,
+              const vv::matrix<double>& x, const vv::matrix<double>& y)
+{
+    if (x.empty() || y.empty())
+    {
+        std::cout << "ERROR: empty data to process for file " << file_name << ".\n";
+        return;
+    }
+    if (x.get_rows_number() != y.get_rows_number())
+    {
+        std::cout << "\nERROR: X and Y have different size! Cannot process data.\n";
+        return;
+    }
+
+    std::ofstream out_file(file_name);
+    out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
+    for (std::size_t i = 0; i < x.get_rows_number(); ++i)
+    {
+        out_file << x(i, 0) << ' ' << y(i, 0) << ' ' << y(i, 1) << ' ' << y(i, 2) << ' ' << y(i, 3)
+            << '\n';
+    }
+}
+
+
+void out_data(const std::string& file_name, const std::string_view mode,
+              const std::string_view param, const std::string_view title,
+              const std::string_view x_label, const std::string_view y_label,
+              const vv::matrix<double>& x1, const vv::matrix<double>& y1,
+              const vv::matrix<double>& x2, const vv::matrix<double>& y2)
+{
+    if (x1.empty() || y1.empty() || x2.empty() || y2.empty())
+    {
+        std::cout << "ERROR: empty data to process for file " << file_name << ".\n";
+        return;
+    }
+    if (x1.get_rows_number() != y1.get_rows_number()
+     || x2.get_rows_number() != y2.get_rows_number())
+    {
+        std::cout << "\nERROR: X and Y have different size! Cannot process data.\n";
+        return;
+    }
+
+    std::ofstream out_file(file_name);
+    out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
+    for (std::size_t i = 0; i < x1.get_rows_number(); ++i)
+    {
+        out_file << x1(i, 0) << ' ' << y1(i, 0) << ' ' << y1(i, 1) << ' ' << y1(i, 2) << ' '
+            << y1(i, 3) << '\n';
+    }
+    out_file << "#\n";
+    for (std::size_t i = 0; i < x2.get_rows_number(); ++i)
+    {
+        out_file << x2(i, 0) << ' ' << y2(i, 0) << ' ' << y2(i, 1) << ' ' << y2(i, 2) << ' '
+            << y2(i, 3) << '\n';
+    }
+}
+
+} // namespace utils
 
 namespace vv
 {
@@ -41,12 +155,12 @@ calc_true(const double a, const double b, const double h, const matrix<double>& 
 {
     const std::size_t n = static_cast<std::size_t>((b - a) / h);
 
-    matrix<double> Y(n, kNumber_F);
-    matrix<double> X(n, 1);
+    matrix<double> Y(n + 1, kNumber_F);
+    matrix<double> X(n + 1, 1);
 
     X(0, 0) = x0(0, 0);
     Y(0) = y0(0);
-    for (std::size_t i = 1; i < n; ++i)
+    for (std::size_t i = 1; i <= n; ++i)
     {
         X(i, 0) = a + i * h;
         Y(i) = f(X(i, 0));
@@ -72,15 +186,30 @@ F(const double x, const detail::matrix::container<double>& y)
 namespace detail
 {
 
-void runga_kutta_2(const double c2, const double a21, const double b1,
-                   const double b2, const double h,
-                   double& X, matrix::container<double>& K1, matrix::container<double>& K2,
-                   matrix::container<double>& Y1, const matrix::container<double>& Y)
+matrix::container<double> runga_kutta_2(const double c2, const double a21, const double b1,
+                                        const double b2, const double h, double& X,
+                                        matrix::container<double>& K1,
+                                        matrix::container<double>& K2,
+                                        matrix::container<double>& Y1,
+                                        const matrix::container<double>& Y)
 {
-    X += h;
-    K1 = h * F(X, Y);
+    const matrix::container<double> F_xy = F(X, Y);
+    K1 = h * F_xy;
     K2 = h * F(X + c2 * h, Y + a21 * K1);
     Y1 = Y + (b1 * K1 + b2 * K2);
+    X += h;
+    return F_xy;
+}
+
+void runga_kutta_2(const double c2, const double a21, const double b1, const double b2,
+                   const double h, double& X, matrix::container<double>& K1,
+                   matrix::container<double>& K2, matrix::container<double>& Y1,
+                   const matrix::container<double>& Y, const matrix::container<double>& F_xy)
+{
+    K1 = h * F_xy;
+    K2 = h * F(X + c2 * h, Y + a21 * K1);
+    Y1 = Y + (b1 * K1 + b2 * K2);
+    X += h;
 }
 
 
@@ -95,18 +224,37 @@ void runga_kutta_2(const double c2, const double a, const double a21, const doub
 }
 
 
-void runga_kutta_4(const double h, double& X, matrix::container<double>& K1,
-                   matrix::container<double>& K2, matrix::container<double>& K3,
-                   matrix::container<double>& K4, matrix::container<double>& Y1,
-                   const matrix::container<double>& Y)
+matrix::container<double> runga_kutta_4(const double h, double& X, matrix::container<double>& K1,
+                                        matrix::container<double>& K2,
+                                        matrix::container<double>& K3,
+                                        matrix::container<double>& K4,
+                                        matrix::container<double>& Y1,
+                                        const matrix::container<double>& Y)
 {
-    X += h;
-    K1 = h * F(X, Y);
+    const matrix::container<double> F_xy = F(X, Y);
+    K1 = h * F_xy;
     K2 = h * F(X + h / 3.0, Y + K1 / 3.0);
     K3 = h * F(X + 2.0 * h / 3.0, Y - K1 / 3.0 + K2);
     K4 = h * F(X + h, Y + K1 - K2 + K3);
     Y1 = Y + (K1 + 3.0 * K2 + 3.0 * K3 + K4) / 8.0;
+    X += h;
+    return F_xy;
 }
+
+
+void runga_kutta_4(const double h, double& X, matrix::container<double>& K1,
+                   matrix::container<double>& K2, matrix::container<double>& K3,
+                   matrix::container<double>& K4, matrix::container<double>& Y1,
+                   const matrix::container<double>& Y, const matrix::container<double>& F_xy)
+{
+    K1 = h * F_xy;
+    K2 = h * F(X + h / 3.0, Y + K1 / 3.0);
+    K3 = h * F(X + 2.0 * h / 3.0, Y - K1 / 3.0 + K2);
+    K4 = h * F(X + h, Y + K1 - K2 + K3);
+    Y1 = Y + (K1 + 3.0 * K2 + 3.0 * K3 + K4) / 8.0;
+    X += h;
+}
+
 
 void runga_kutta_4(const double a, const double h, const std::size_t i, ::vv::matrix<double>& X,
                    ::vv::matrix<double>& K1, ::vv::matrix<double>& K2, ::vv::matrix<double>& K3,
@@ -181,23 +329,7 @@ double norm(const detail::matrix::container<double>& x)
         result += x.at(i) * x.at(i);
     }
 
-    return sqrt(result);
-}
-
-
-matrix<double> extract(const matrix<double>& x, const std::size_t n)
-{
-    if (n >= x.get_columns_number())
-    {
-        return matrix<double>{};
-    }
-
-    matrix<double> result(x.get_rows_number(), 1);
-    for (std::size_t i = 0; i < x.get_rows_number(); ++i)
-    {
-        result(i, 0) = x(i, n);
-    }
-    return result;
+    return std::sqrt(result);
 }
 
 
@@ -221,11 +353,12 @@ std::vector<std::pair<double, double>> process_data(const matrix<double>& x,
     return result;
 }
 
+
 matrix<double> data_x_true;
-matrix<double> data_y_true;
+matrix<double> data_y_true(5, kNumber_F, mtx::mode::dynamically_expandable);
 
 matrix<double> data_x_true_opp;
-matrix<double> data_y_true_opp;
+matrix<double> data_y_true_opp(5, kNumber_F, mtx::mode::dynamically_expandable);
 
 std::vector<std::pair<double, double>> graphic_data;
 std::vector<std::pair<double, double>> graphic_data_opp;
@@ -258,6 +391,7 @@ std::vector<std::pair<double, double>> count_F_opp;
 double calculate(const double c2, const double a, const double b, const double h,
                  const matrix<double>& x0, const matrix<double>& y0)
 {
+    assert(b > a);
     const std::size_t n = static_cast<std::size_t>((b - a) / h);
     const std::size_t n2 = n * 2;
 
@@ -280,18 +414,19 @@ std::tuple<matrix<double>, matrix<double>>
 calculate_last(const double c2, const double a, const double b, const double h,
                const matrix<double>& x0, const matrix<double>& y0)
 {
+    assert(b > a);
     const std::size_t n = static_cast<std::size_t>((b - a) / h);
-    const std::size_t n2 = n / 2;
+    const std::size_t n2 = n * 2;
 
     const auto[X1, Y1] = runge_kutta_2(c2, a, b, h, x0, y0);
-    const auto[X1_2, Y1_2] = runge_kutta_2(c2, a, b, h * 2.0, x0, y0);
+    const auto[X1_2, Y1_2] = runge_kutta_2(c2, a, b, h / 2.0, x0, y0);
 
-    const detail::matrix::container<double> y2n = Y1(n);
-    const detail::matrix::container<double> yn = Y1_2(n2);
+    const detail::matrix::container<double> yn = Y1(n);
+    const detail::matrix::container<double> y2n = Y1_2(n2);
 
     constexpr std::size_t p = 2;
-    const double R2n = norm(y2n - yn) / (std::pow(2.0, p) - 1.0);
-    std::cout << "Step = " << h << "\nR2n = " << R2n << '\n';
+    const double Rn = norm(y2n - yn) / (1.0 - 1.0 / std::pow(2.0, p));
+    std::cout << "Step = " << h << "\nRn = " << Rn << '\n';
 
     return { X1, Y1 };
 }
@@ -300,6 +435,7 @@ calculate_last(const double c2, const double a, const double b, const double h,
 double calculate_opp(const double a, const double b, const double h,
                      const matrix<double>& x0, const matrix<double>& y0)
 {
+    assert(b > a);
     const std::size_t n = static_cast<std::size_t>((b - a) / h);
     const std::size_t n2 = n * 2;
 
@@ -321,18 +457,19 @@ std::tuple<matrix<double>, matrix<double>>
 calculate_last_opp(const double a, const double b, const double h, const matrix<double>& x0,
                    const matrix<double>& y0)
 {
+    assert(b > a);
     const std::size_t n = static_cast<std::size_t>((b - a) / h);
-    const std::size_t n2 = n / 2;
+    const std::size_t n2 = n * 2;
 
     const auto [X1, Y1] = runge_kutta_4(a, b, h, x0, y0);
-    const auto [X1_2, Y1_2] = runge_kutta_4(a, b, h * 2.0, x0, y0);
+    const auto [X1_2, Y1_2] = runge_kutta_4(a, b, h / 2.0, x0, y0);
 
-    const detail::matrix::container<double> y2n_opp = Y1(n);
-    const detail::matrix::container<double> yn_opp = Y1_2(n2);
+    const detail::matrix::container<double> yn_opp = Y1(n);
+    const detail::matrix::container<double> y2n_opp = Y1_2(n2);
 
     constexpr std::size_t p = 4;
-    const double R2n = norm(y2n_opp - yn_opp) / (std::pow(2.0, p) - 1.0);
-    std::cout << "Opponent step = " << h << "\nR2n = " << R2n << '\n';
+    const double Rn = norm(y2n_opp - yn_opp) / (1.0 - 1.0 / std::pow(2.0, p));
+    std::cout << "Opponent step = " << h << "\nRn = " << Rn << '\n';
 
     return { X1, Y1 };
 }
@@ -370,6 +507,7 @@ std::tuple<matrix<double>, matrix<double>>
 calculate_with_h_auto(const double c2, const double a, const double b, const matrix<double>& x0,
                       const matrix<double>& y0, const double rtol, const double atol)
 {
+    assert(b > a);
     assert(c2 != 0.0);
 
     const double a21 = c2;
@@ -378,11 +516,8 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
 
     constexpr std::size_t p = 2;
 
-    const double h = calculate_h0(rtol, atol, p, x0, y0);
-    const std::size_t n = static_cast<std::size_t>(b - a);
-
-    matrix<double> Y(n, kNumber_F, mtx::mode::dynamically_expandable);
-    matrix<double> X(n, 1, mtx::mode::dynamically_expandable);
+    matrix<double> Y(1, kNumber_F, mtx::mode::dynamically_expandable);
+    matrix<double> X(1, 1, mtx::mode::dynamically_expandable);
 
     detail::matrix::container<double> K1_1;
     detail::matrix::container<double> K2_1;
@@ -399,35 +534,23 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
 
     X(0, 0) = x0(0, 0);
     Y(0) = y0(0);
+    data_y_true(0) = y0(0);
 
-    std::vector<double> h_vec{ h };
-    h_vec.reserve(n);
-    quality.reserve(n);
-    h_acc.reserve(n);
-    h_not_acc.reserve(n);
+    std::vector<double> h_vec{ calculate_h0(rtol, atol, p, x0, y0) };
 
     std::size_t i = 1;
     while (X(i - 1, 0) + h_vec.at(i - 1) <= b)
     {
         std::cout << "Step = " << (i - 1) << " \th = " << h_vec.at(i - 1) << '\t';
-        detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1), X_1, K1_1, K2_1, Y_1, Y(i - 1));
+        const detail::matrix::container<double> F_xy = detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1),
+                                                                X_1, K1_1, K2_1, Y_1, Y(i - 1));
 
-        detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2, Y(i - 1));
+        detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2, Y(i - 1), F_xy);
         X_12 = X_2;
         Y_12 = Y_2;
         detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2, Y_2);
 
-        double max1 = 0.0;
-        double max2 = 0.0;
-        double max3 = 0.0;
-        for (std::size_t j = 0; j < kNumber_F; ++j)
-        {
-            max1 += Y(i - 1, j) * Y(i - 1, j);
-            max2 += Y_1.at(j) * Y_1.at(j);
-            max3 += Y_2.at(j) * Y_2.at(j);
-        }
-        const double tol = rtol * std::sqrt(std::max({ max1, max2, max3 })) + atol;
-
+        const double tol = rtol * std::max({ norm(Y(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
         const double rn = norm(Y_2 - Y_1) / (1.0 -  1.0 / std::pow(2, p));
 
         if (rn > tol * std::pow(2.0, p))
@@ -446,9 +569,11 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             h_vec.emplace_back(h_vec.at(i - 1) / 2.0);
             Y(i) = Y_2;
             X(i, 0) = X_1;
+            data_y_true(i) = f(X_1);
+
+            quality.emplace_back(X_1, norm(data_y_true(i) - Y_2) / rn);
             ++i;
 
-            quality.emplace_back(X_1, norm(f(X_1) - Y_2) / rn);
             std::cout << "Chosen 2 way.\n";
         }
         else if (rn >= tol / std::pow(2.0, p + 1))
@@ -458,9 +583,11 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             h_vec.emplace_back(h_vec.at(i - 1));
             Y(i) = Y_1;
             X(i, 0) = X_1;
+            data_y_true(i) = f(X_1);
+
+            quality.emplace_back(X_1, norm(data_y_true(i) - Y_1) / rn);
             ++i;
 
-            quality.emplace_back(X_1, norm(f(X_1) - Y_1) / rn);
             std::cout << "Chosen 3 way.\n";
         }
         else
@@ -478,15 +605,18 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             }
             Y(i) = Y_1;
             X(i, 0) = X_1;
+            data_y_true(i) = f(X_1);
+
+            quality.emplace_back(X_1, norm(data_y_true(i) - Y_1) / rn);
             ++i;
 
-            quality.emplace_back(X_1, norm(f(X_1) - Y_1) / rn);
             std::cout << "Chosen 4 way.\n";
         }
     }
     constexpr double addressing = 3.0;
     constexpr double usage_F_rkm_2 = 2.0;
-    count_F.emplace_back(-std::log10(rtol), std::log10((i - 1) * addressing * usage_F_rkm_2));
+    constexpr double s = addressing * usage_F_rkm_2 - 1.0;
+    count_F.emplace_back(-std::log10(rtol), std::log10((i - 1) * s));
 
     return { X, Y };
 }
@@ -496,13 +626,11 @@ std::tuple<matrix<double>, matrix<double>>
 calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& x0,
                           const matrix<double>& y0, const double rtol, const double atol)
 {
+    assert(b > a);
     constexpr std::size_t p = 4;
 
-    const double h = calculate_h0(rtol, atol, p, x0, y0);
-    const std::size_t n = static_cast<std::size_t>(b - a);
-
-    matrix<double> Y(n, kNumber_F, mtx::mode::dynamically_expandable);
-    matrix<double> X(n, 1, mtx::mode::dynamically_expandable);
+    matrix<double> Y(1, kNumber_F, mtx::mode::dynamically_expandable);
+    matrix<double> X(1, 1, mtx::mode::dynamically_expandable);
 
     detail::matrix::container<double> K1_1;
     detail::matrix::container<double> K2_1;
@@ -523,35 +651,23 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
 
     X(0, 0) = x0(0, 0);
     Y(0) = y0(0);
+    data_y_true_opp(0) = y0(0);
 
-    std::vector<double> h_vec{ h };
-    h_vec.reserve(n);
-    quality_opp.reserve(n);
-    h_acc_opp.reserve(n);
-    h_not_acc_opp.reserve(n);
+    std::vector<double> h_vec{ calculate_h0(rtol, atol, p, x0, y0) };
 
     std::size_t i = 1;
     while (X(i - 1, 0) + h_vec.at(i - 1) <= b)
     {
         std::cout << "Step = " << (i - 1) << " \th = " << h_vec.at(i - 1) << '\t';
-        detail::runga_kutta_4(h_vec.at(i - 1), X_1, K1_1, K2_1, K3_1, K4_1, Y_1, Y(i - 1));
+        const detail::matrix::container<double> F_xy = detail::runga_kutta_4(h_vec.at(i - 1), X_1,
+                                                            K1_1, K2_1, K3_1, K4_1, Y_1, Y(i - 1));
 
-        detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y(i - 1));
+        detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y(i - 1), F_xy);
         X_12 = X_2;
         Y_12 = Y_2;
         detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y_2);
 
-        double max1 = 0.0;
-        double max2 = 0.0;
-        double max3 = 0.0;
-        for (std::size_t j = 0; j < kNumber_F; ++j)
-        {
-            max1 += Y(i - 1, j) * Y(i - 1, j);
-            max2 += Y_1.at(j) * Y_1.at(j);
-            max3 += Y_2.at(j) * Y_2.at(j);
-        }
-        const double tol = rtol * std::sqrt(std::max({ max1, max2, max3 })) + atol;
-
+        const double tol = rtol * std::max({ norm(Y(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
         const double rn = norm(Y_2 - Y_1) / (1.0 -  1.0 / std::pow(2, p));
 
         if (rn > tol * std::pow(2.0, p))
@@ -570,9 +686,11 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             h_vec.emplace_back(h_vec.at(i - 1) / 2.0);
             Y(i) = Y_2;
             X(i, 0) = X_1;
+            data_y_true_opp(i) = f(X_1);
+
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_2) / rn);
             ++i;
 
-            quality_opp.emplace_back(X_1, norm(f(X_1) - Y_2) / rn);
             std::cout << "Chosen 2 way.\n";
         }
         else if (rn >= tol / std::pow(2.0, p + 1))
@@ -582,9 +700,11 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             h_vec.emplace_back(h_vec.at(i - 1));
             Y(i) = Y_1;
             X(i, 0) = X_1;
+            data_y_true_opp(i) = f(X_1);
+
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_1) / rn);
             ++i;
 
-            quality_opp.emplace_back(X_1, norm(f(X_1) - Y_1) / rn);
             std::cout << "Chosen 3 way.\n";
         }
         else
@@ -602,15 +722,18 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             }
             Y(i) = Y_1;
             X(i, 0) = X_1;
+            data_y_true_opp(i) = f(X_1);
+
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_1) / rn);
             ++i;
 
-            quality_opp.emplace_back(X_1, norm(f(X_1) - Y_1) / rn);
             std::cout << "Chosen 4 way.\n";
         }
     }
     constexpr double addressing = 3.0;
     constexpr double usage_F_rkm_4 = 4.0;
-    count_F_opp.emplace_back(-std::log10(rtol), std::log10((i - 1) * addressing * usage_F_rkm_4));
+    constexpr double s = addressing * usage_F_rkm_4 - 1.0;
+    count_F_opp.emplace_back(-std::log10(rtol), std::log10((i - 1) * s));
 
     return { X, Y };
 }
@@ -633,29 +756,23 @@ TEST_METHOD(runge_kutta_calculation)
     constexpr double tol = 1e-5;
     
     double R2n;
-    double R2n_prev;
     double h;
-    for (std::size_t i = 5; i <= 13; ++i)
+    for (std::size_t i = 5; i <= 13; ++i) // If i < 5 may appear NAN because of log.
     {
         h = 1.0 / std::pow(2.0, i);
         R2n = calculate(c2, a, b, h, x0, y0);
 
-        if (i == 5)
-        {
-            R2n_prev = R2n;
-            continue;
-        }
         graphic_data.emplace_back(std::log2(h), std::log2(R2n));
-        R2n_prev = R2n;
     }
-    //sconst double h_opt = h * std::pow(tol / std::abs(R2n), 1.0 / p) / 2.0;
+    constexpr double guarantee_multiplier = 0.95;
+    const double h_opt = guarantee_multiplier * h * std::pow(tol / std::abs(R2n), 1.0 / p) / 2.0;
 
-    //std::cout << "\nh_opt = " << h_opt << "\n\n";
+    std::cout << "\nh_opt = " << h_opt << "\n\n";
     
-    //const auto [X1, Y1] = calculate_last(c2, a, b, h_opt, x0, y0);
-    //const auto [X, Y] = calc_true(a, b, h_opt, x0, y0);
+    const auto [X1, Y1] = calculate_last(c2, a, b, h_opt, x0, y0);
+    const auto [X, Y] = calc_true(a, b, h_opt, x0, y0);
     
-    //tol_graphic_data = process_data(X, Y, Y1);
+    tol_graphic_data = process_data(X, Y, Y1);
 
     std::cout << "\nCalculations are finished.\n\n";
 }
@@ -674,30 +791,23 @@ TEST_METHOD(runge_kutta_calculation_opp)
     constexpr double tol = 1e-5;
 
     double R2n;
-    double R2n_prev;
     double h;
-    for (std::size_t i = 5; i <= 13; ++i)
+    for (std::size_t i = 5; i <= 13; ++i) // If i < 5 may appear NAN because of log.
     {
         h = 1.0 / std::pow(2.0, i);
         R2n = calculate_opp(a, b, h, x0, y0);
-        
-        
-        if (i == 5)
-        {
-            R2n_prev = R2n;
-            continue;
-        }
-        graphic_data_opp.emplace_back(std::log2(h), std::log2(R2n));
-        R2n_prev = R2n;
-    }
-    //const double h_opt = h * std::pow(tol / std::abs(R2n), 1.0 / p) / 2.0;
 
-    //std::cout << "\nOpponent h_opt = " << h_opt << "\n\n";
+        graphic_data_opp.emplace_back(std::log2(h), std::log2(R2n));
+    }
+    constexpr double guarantee_multiplier = 0.95;
+    const double h_opt = guarantee_multiplier * h * std::pow(tol / std::abs(R2n), 1.0 / p) / 2.0;
     
-    //const auto [X1, Y1] = calculate_last_opp(a, b, h_opt, x0, y0);
-    //const auto [X, Y] = calc_true(a, b, h_opt, x0, y0);
+    std::cout << "\nOpponent h_opt = " << h_opt << "\n\n";
     
-    //tol_graphic_data_opp = process_data(X, Y, Y1);
+    const auto [X1, Y1] = calculate_last_opp(a, b, h_opt, x0, y0);
+    const auto [X, Y] = calc_true(a, b, h_opt, x0, y0);
+    
+    tol_graphic_data_opp = process_data(X, Y, Y1);
 
     std::cout << "\nCalculations are finished.\n\n";
 }
@@ -719,13 +829,8 @@ TEST_METHOD(runge_kutta_calculation_auto)
 
     std::tie(graphic_data_x, graphic_data_y) = calculate_with_h_auto(c2, a, b, x0, y0, rtol, atol);
 
-    const double h_mid = 1.0 * (b - a) / graphic_data_x.get_rows_number();
-    std::cout << "\nCalculate true functions with h_mid = " << h_mid << '\n';
-
-    const auto [X, Y] = calc_true(a, b, h_mid, x0, y0);
-    data_x_true = X;
-    data_y_true = Y;
-    tol_graphic_data_auto = process_data(X, Y, graphic_data_y);
+    data_x_true = graphic_data_x;
+    tol_graphic_data_auto = process_data(data_x_true, data_y_true, graphic_data_y);
 
     std::cout << "\nCalculations are finished.\n\n";
 }
@@ -746,13 +851,8 @@ TEST_METHOD(runge_kutta_calculation_auto_opp)
 
     std::tie(graphic_data_x_opp, graphic_data_y_opp) = calculate_with_h_auto_opp(a, b, x0, y0, rtol, atol);
 
-    const double h_mid = 1.0 * (b - a) / graphic_data_x_opp.get_rows_number();
-    std::cout << "\nCalculate true functions with h_mid = " << h_mid << '\n';
-
-    const auto [X, Y] = calc_true(a, b, h_mid, x0, y0);
-    data_x_true_opp = X;
-    data_y_true_opp = Y;
-    tol_graphic_data_auto_opp = process_data(X, Y, graphic_data_y_opp);
+    data_x_true_opp = graphic_data_x_opp;
+    tol_graphic_data_auto_opp = process_data(data_x_true_opp, data_y_true_opp, graphic_data_y_opp);
 
     std::cout << "\nCalculations are finished.\n\n";
 }
@@ -802,6 +902,68 @@ TEST_METHOD(runge_kutta_calculation_auto_rtol_opp)
     }
 
     std::cout << "\nCalculations are finished.\n\n";
+}
+
+
+TEST_METHOD(do_runge_kutta_tests)
+{
+    // Calculate RKM with p = 2 and then calculate with h_opt.
+    runge_kutta_calculation();
+    
+    // Calculate RKM with p = 4 and then calculate with h_opt.
+    runge_kutta_calculation_opp();
+
+    // Calculate RKM_auto with p = 2 and also save plot and quality with h_acc and h_not_acc.
+    runge_kutta_calculation_auto();
+    
+    // Calculate RKM_auto with p = 4 and also save plot and quality with h_acc and h_not_acc.
+    runge_kutta_calculation_auto_opp();
+
+
+    utils::out_data("rkm_h.txt", "2p", "def",
+                    "RKM with h = 1/2^k", "-log2(h)", "log2(R2n)",
+                    graphic_data, graphic_data_opp);
+    utils::out_data("rkm_h_opt.txt", "2p", "def", "RKM with h_opt", "x", "y - y1",
+                    tol_graphic_data, tol_graphic_data_opp);
+    
+    utils::out_data("rkm_2_auto.txt", "1p", "def",
+                    "Tolerance for RKM_auto with p = 2", "x", "y - y1",
+                    tol_graphic_data_auto);
+    utils::out_data("rkm_2_auto_plot.txt", "8p", "r;r;r;r;b;b;b;b",
+                    "Plot from RKM_auto with p = 2", "x", "y",
+                    graphic_data_x, graphic_data_y,  data_x_true_opp, data_y_true_opp);
+    utils::out_data("rkm_2_auto_quality.txt", "1p", "def",
+                    "Quality for RKM_auto with p = 2", "x", "Quality",
+                    quality);
+    utils::out_data("rkm_2_auto_h.txt", "2p", "r.;b.",
+                     "Choice 'h' for RKM_auto with p = 2", "x", "h",
+                     h_acc, h_not_acc);
+    
+    utils::out_data("rkm_4_auto.txt", "1p", "def",
+                    "Tolerance for RKM_auto with p = 4", "x", "y - y1",
+                    tol_graphic_data_auto_opp);
+    utils::out_data("rkm_4_auto_plot.txt", "8p", "r;r;r;r;b;b;b;b",
+                    "Plot from RKM_auto with p = 4", "x", "y",
+                    graphic_data_x_opp, graphic_data_y_opp, data_x_true_opp, data_y_true_opp);
+    utils::out_data("rkm_4_auto_quality.txt", "1p", "def",
+                    "Quality for RKM_auto with p = 4", "x", "Quality",
+                    quality_opp);
+    utils::out_data("rkm_4_auto_h.txt", "2p", "r.;b.",
+                    "Choice 'h' for RKM_auto with p = 4", "x", "h",
+                    h_acc_opp, h_not_acc_opp);
+
+
+    // Calculate RKM_auto and count addressing to F.
+    count_F.clear();
+    runge_kutta_calculation_auto_rtol();
+    // And for opponent method.
+    count_F_opp.clear();
+    runge_kutta_calculation_auto_rtol_opp();
+
+
+    utils::out_data("rkm_auto_addressing.txt", "2p", "def",
+                    "Counting addresses to F", "-log10(rtol)", "log10(Addressing_F)",
+                    count_F, count_F_opp);
 }
 
 #endif // ENABLE_TESTS_RUNGE_KUTTA
