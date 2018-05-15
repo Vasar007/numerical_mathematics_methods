@@ -87,7 +87,7 @@ TEST_METHOD(do_runge_kutta_tests);
 #define ENABLE_TESTS_HYBRID_NEWTON_SYSTEM  0
 #define ENABLE_TESTS_NEWTON_COTES_INTEGRAL 0
 #define ENABLE_TESTS_GAUSS_INTEGRAL        0
-#define ENABLE_TESTS_RUNGE_KUTTA           1
+#define ENABLE_TESTS_RUNGE_KUTTA           0
 
 
 void start_tests()

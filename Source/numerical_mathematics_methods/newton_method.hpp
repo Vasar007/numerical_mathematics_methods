@@ -626,7 +626,7 @@ TEST_METHOD(mod_newton_test_solve_system)
         auto start = std::chrono::steady_clock::now();
         const auto mod_newton_solve_system = mod_newton_method_system(nonlinear_matrix,
                                                                       jacobi_matrix, vector_x,
-                                                                      k, true, kEps);
+                                                                      k, kEps);
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
         std::cout << k << " Calculation time: " << duration.count() << " ms\n";
 
