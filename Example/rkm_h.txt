@@ -1,4 +1,4 @@
-2p|def|RKM with h = 1/2^k|-log2(h)|log2(R2n)
+2p|def|RKM with h = 1/2^k|log2(h)|log2(R2n)
 -5 -0.89585
 -6 -3.00681
 -7 -4.93649
