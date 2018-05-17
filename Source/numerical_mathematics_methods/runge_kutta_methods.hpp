@@ -30,7 +30,7 @@ void out_data(const std::string& file_name, const std::string_view mode,
 
     std::ofstream out_file(file_name);
     out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
-    for (const auto [x, y] : data)
+    for (const auto& [x, y] : data)
     {
         out_file << x << ' ' << y << '\n';
     }
@@ -51,7 +51,7 @@ void out_data(const std::string& file_name, const std::string_view mode,
 
     std::ofstream out_file(file_name);
     out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
-    for (const auto [x, y] : data_1)
+    for (const auto& [x, y] : data_1)
     {
         out_file << x << ' ' << y << '\n';
     }
@@ -921,7 +921,7 @@ TEST_METHOD(do_runge_kutta_tests)
 
 
     utils::out_data("rkm_h.txt", "2p", "def",
-                    "RKM with h = 1/2^k", "-log2(h)", "log2(R2n)",
+                    "RKM with h = 1/2^k", "log2(h)", "log2(R2n)",
                     graphic_data, graphic_data_opp);
     utils::out_data("rkm_h_opt.txt", "2p", "def", "RKM with h_opt", "x", "y - y1",
                     tol_graphic_data, tol_graphic_data_opp);
