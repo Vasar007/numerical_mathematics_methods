@@ -15,8 +15,8 @@ namespace vv
                         catch(...) { std::cout << "Not handled exception!" << "\n\n"; }                        
 
 #define TEST_METHOD_RUNTIME(name) template <class Type, std::size_t Rows, std::size_t Columns> \
-                        void name(const matrix<Type, Rows, Columns>& mat_A, \
-                                  const matrix<Type, Rows, 1>& vec_b = matrix<Type, Rows, 1>{}, \
+                        void name(const cx_matrix<Type, Rows, Columns>& mat_A, \
+                                  const cx_matrix<Type, Rows, 1>& vec_b = cx_matrix<Type, Rows, 1>{}, \
                                   const Type eps = kDefault_eps<Type>)
 
 #define TEST_METHOD(name) void name()

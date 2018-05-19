@@ -41,37 +41,41 @@ cx_matrix<double, 10, 1> nonlinear_matrix(const cx_matrix<double, 10, 1>& x)
 {
     cx_matrix<double, 10, 1> result
     {
-        cos(x(0, 0) * x(1, 0)) - exp(-3. * x(2, 0)) + x(3, 0) * x(4, 0) * x(4, 0) -
-            x(5, 0) - sinh(2. * x(7, 0)) * x(8, 0) + 2. * x(9, 0) + 2.0004339741653854440,
+        cos(x.at(0, 0) * x.at(1, 0)) - exp(-3.0 * x.at(2, 0)) + x.at(3, 0) * x.at(4, 0)
+            * x.at(4, 0) - x.at(5, 0) - sinh(2.0 * x.at(7, 0)) * x.at(8, 0) + 2.0 * x.at(9, 0)
+            + 2.0004339741653854440,
 
-        sin(x(0, 0) * x(1, 0)) + x(2, 0) * x(8, 0) * x(6, 0) - exp(-x(9, 0) + x(5, 0)) +
-            3. * x(4, 0) * x(4, 0) - x(5, 0) * (x(7, 0) + 1.) + 10.886272036407019994,
+        sin(x.at(0, 0) * x.at(1, 0)) + x.at(2, 0) * x.at(8, 0) * x.at(6, 0) - exp(-x.at(9, 0)
+            + x.at(5, 0)) + 3.0 * x.at(4, 0) * x.at(4, 0) - x.at(5, 0) * (x.at(7, 0) + 1.0)
+            + 10.886272036407019994,
+
+        x.at(0, 0) - x.at(1, 0) + x.at(2, 0) - x.at(3, 0) + x.at(4, 0) - x.at(5, 0) + x.at(6, 0)
+            - x.at(7, 0) + x.at(8, 0) - x.at(9, 0) - 3.1361904761904761904,
+
+        2.0 * cos(-x.at(8, 0) + x.at(3, 0)) + x.at(4, 0) / (x.at(2, 0) + x.at(0, 0)) - sin(x.at(1, 0)
+            * x.at(1, 0)) + cos(x.at(6, 0) * x.at(9, 0)) * cos(x.at(6, 0) * x.at(9, 0)) - x.at(7, 0)
+            - 0.170747270502230475,
+
+        sin(x.at(4, 0)) + 2.0 * x.at(7, 0) * (x.at(2, 0) + x.at(0, 0)) - exp(-x.at(6, 0)
+            * (-x.at(9, 0) + x.at(5, 0))) + 2. * cos(x.at(1, 0)) - 1.0 / (x.at(3, 0) - x.at(8, 0))
+            - 0.368589627310127786,
+
+        exp(x.at(0, 0) - x.at(3, 0) - x.at(8, 0)) + x.at(4, 0) * x.at(4, 0) / x.at(7, 0) + 0.5
+            * cos(3.0 * x.at(9, 0) * x.at(1, 0)) - x.at(5, 0) * x.at(2, 0) + 2.049108601677187511,
+
+        x.at(1, 0) * x.at(1, 0) * x.at(1, 0) * x.at(6, 0) - sin(x.at(9, 0) / x.at(4, 0)
+            + x.at(7, 0)) + (x.at(0, 0) - x.at(5, 0)) * cos(x.at(3, 0)) + x.at(2, 0)
+            - 0.738043007620279801,
+
+        x.at(4, 0) * (x.at(0, 0) - 2. * x.at(5, 0)) * (x.at(0, 0) - 2.0 * x.at(5, 0)) - 2.0
+            * sin(-x.at(8, 0) + x.at(2, 0)) + 1.5 * x.at(3, 0) - exp(x.at(1, 0) * x.at(6, 0)
+            + x.at(9, 0)) + 3.566832198969380904,
         
-        x(0, 0) - x(1, 0) + x(2, 0) - x(3, 0) + x(4, 0) - x(5, 0) + x(6, 0) - x(7, 0) + x(8, 0) -
-            x(9, 0) - 3.1361904761904761904,
+        7.0 / x.at(5, 0) + exp(x.at(4, 0) + x.at(3, 0)) - 2.0 * x.at(1, 0) * x.at(7, 0) * x.at(9, 0)
+            * x.at(6, 0) + 3.0 * x.at(8, 0) - 3.0 * x.at(0, 0) - 8.439473450838325749,
         
-        2. * cos(-x(8, 0) + x(3, 0)) + x(4, 0) / (x(2, 0) + x(0, 0)) - sin(x(1, 0) *
-            x(1, 0)) + cos(x(6, 0) * x(9, 0)) * cos(x(6, 0) * x(9, 0)) - x(7, 0) -
-            0.170747270502230475,
-        
-        sin(x(4, 0)) + 2. * x(7, 0) * (x(2, 0) + x(0, 0)) - exp(-x(6, 0) *
-            (-x(9, 0) + x(5, 0))) + 2. * cos(x(1, 0)) - 1. / (x(3, 0) - x(8, 0)) -
-            0.368589627310127786,
-        
-        exp(x(0, 0) - x(3, 0) - x(8, 0)) + x(4, 0) * x(4, 0) / x(7, 0) + 0.5 *
-            cos(3. * x(9, 0) * x(1, 0)) - x(5, 0) * x(2, 0) + 2.049108601677187511,
-        
-        x(1, 0) * x(1, 0) * x(1, 0) * x(6, 0) - sin(x(9, 0) / x(4, 0) + x(7, 0)) +
-            (x(0, 0) - x(5, 0)) * cos(x(3, 0)) + x(2, 0) - 0.738043007620279801,
-        
-        x(4, 0) * (x(0, 0) - 2. * x(5, 0)) * (x(0, 0) - 2. * x(5, 0)) - 2. * sin(-x(8, 0) +
-            x(2, 0)) + 1.5 * x(3, 0) - exp(x(1, 0) * x(6, 0) + x(9, 0)) + 3.566832198969380904,
-        
-        7. / x(5, 0) + exp(x(4, 0) + x(3, 0)) - 2 * x(1, 0) * x(7, 0) * x(9, 0) * x(6, 0) +
-            3 * x(8, 0) - 3 * x(0, 0) - 8.439473450838325749,
-        
-        x(9, 0) * x(0, 0) + x(8, 0) * x(1, 0) - x(7, 0) * x(2, 0) + sin(x(3, 0) + x(4, 0) +
-            x(5, 0)) * x(6, 0) - 0.7823809523809523809
+        x.at(9, 0) * x.at(0, 0) + x.at(8, 0) * x.at(1, 0) - x.at(7, 0) * x.at(2, 0) + sin(x.at(3, 0) 
+            + x.at(4, 0) + x.at(5, 0)) * x.at(6, 0) - 0.7823809523809523809
     };
     return result;
 }
@@ -125,26 +129,26 @@ cx_matrix<double, 10, 10> jacobi_matrix(const cx_matrix<double, 10, 1>& x)
 {
     cx_matrix<double, 10, 10> result
     {
-        -sin(x(0, 0) * x(1, 0)) * x(1, 0),
-        -sin(x(0, 0) * x(1, 0)) * x(0, 0),
-        3. * exp(-3. * x(2, 0)),
-        x(4, 0) * x(4, 0),
-        2. * x(3, 0) * x(4, 0),
+        -sin(x.at(0, 0) * x.at(1, 0)) * x.at(1, 0),
+        -sin(x.at(0, 0) * x.at(1, 0)) * x.at(0, 0),
+        3. * exp(-3. * x.at(2, 0)),
+        x.at(4, 0) * x.at(4, 0),
+        2. * x.at(3, 0) * x.at(4, 0),
         -1.,
         0.,
-        -2. * cosh(2. * x(7, 0)) * x(8, 0),
-        -sinh(2. * x(7, 0)),
+        -2. * cosh(2. * x.at(7, 0)) * x.at(8, 0),
+        -sinh(2. * x.at(7, 0)),
         2.,
-        cos(x(0, 0) * x(1, 0)) * x(1, 0),
-        cos(x(0, 0) * x(1, 0)) * x(0, 0),
-        x(8, 0) * x(6, 0),
+        cos(x.at(0, 0) * x.at(1, 0)) * x.at(1, 0),
+        cos(x.at(0, 0) * x.at(1, 0)) * x.at(0, 0),
+        x.at(8, 0) * x.at(6, 0),
         0.,
-        6. * x(4, 0),
-        -exp(-x(9, 0) + x(5, 0)) - x(7, 0) - 1.,
-        x(2, 0) * x(8, 0),
-        -x(5, 0),
-        x(2, 0) * x(6, 0),
-        exp(-x(9, 0) + x(5, 0)),
+        6. * x.at(4, 0),
+        -exp(-x.at(9, 0) + x.at(5, 0)) - x.at(7, 0) - 1.,
+        x.at(2, 0) * x.at(8, 0),
+        -x.at(5, 0),
+        x.at(2, 0) * x.at(6, 0),
+        exp(-x.at(9, 0) + x.at(5, 0)),
         1.,
         -1.,
         1.,
@@ -155,76 +159,76 @@ cx_matrix<double, 10, 10> jacobi_matrix(const cx_matrix<double, 10, 1>& x)
         -1.,
         1.,
         -1.,
-        -x(4, 0) / ((x(2, 0) + x(0, 0)) * (x(2, 0) + x(0, 0))),
-        -2. * cos(x(1, 0) * x(1, 0)) * x(1, 0),
-        -x(4, 0) / ((x(2, 0) + x(0, 0)) * (x(2, 0) + x(0, 0))),
-        -2. * sin(-x(8, 0) + x(3, 0)),
-        1. / (x(2, 0) + x(0, 0)),
+        -x.at(4, 0) / ((x.at(2, 0) + x.at(0, 0)) * (x.at(2, 0) + x.at(0, 0))),
+        -2. * cos(x.at(1, 0) * x.at(1, 0)) * x.at(1, 0),
+        -x.at(4, 0) / ((x.at(2, 0) + x.at(0, 0)) * (x.at(2, 0) + x.at(0, 0))),
+        -2. * sin(-x.at(8, 0) + x.at(3, 0)),
+        1. / (x.at(2, 0) + x.at(0, 0)),
         0.,
-        -2. * cos(x(6, 0) * x(9, 0)) * sin(x(6, 0) * x(9, 0)) * x(9, 0),
+        -2. * cos(x.at(6, 0) * x.at(9, 0)) * sin(x.at(6, 0) * x.at(9, 0)) * x.at(9, 0),
         -1,
-        2. * sin(-x(8, 0) + x(3, 0)),
-        -2. * cos(x(6, 0) * x(9, 0)) * sin(x(6, 0) * x(9, 0)) * x(6, 0),
-        2. * x(7, 0),
-        -2. * sin(x(1, 0)),
-        2. * x(7, 0),
-        1. / ((-x(8, 0) + x(3, 0)) * (-x(8, 0) + x(3, 0))),
-        cos(x(4, 0)),
-        x(6, 0) * exp(-x(6, 0) * (-x(9, 0) + x(5, 0))),
-        -(x(9, 0) - x(5, 0)) * exp(-x(6, 0) * (-x(9, 0) + x(5, 0))),
-        2. * x(2, 0) + 2. * x(0, 0),
-        -1. / ((-x(8, 0) + x(3, 0)) * (-x(8, 0) + x(3, 0))),
-        -x(6, 0) * exp(-x(6, 0) * (-x(9, 0) + x(5, 0))),
-        exp(x(0, 0) - x(3, 0) - x(8, 0)),
-        -1.5 * sin(3. * x(9, 0) * x(1, 0)) * x(9, 0),
-        -x(5, 0),
-        -exp(x(0, 0) - x(3, 0) - x(8, 0)),
-        2. * x(4, 0) / x(7, 0),
-        -x(2, 0),
+        2. * sin(-x.at(8, 0) + x.at(3, 0)),
+        -2. * cos(x.at(6, 0) * x.at(9, 0)) * sin(x.at(6, 0) * x.at(9, 0)) * x.at(6, 0),
+        2. * x.at(7, 0),
+        -2. * sin(x.at(1, 0)),
+        2. * x.at(7, 0),
+        1. / ((-x.at(8, 0) + x.at(3, 0)) * (-x.at(8, 0) + x.at(3, 0))),
+        cos(x.at(4, 0)),
+        x.at(6, 0) * exp(-x.at(6, 0) * (-x.at(9, 0) + x.at(5, 0))),
+        -(x.at(9, 0) - x.at(5, 0)) * exp(-x.at(6, 0) * (-x.at(9, 0) + x.at(5, 0))),
+        2. * x.at(2, 0) + 2. * x.at(0, 0),
+        -1. / ((-x.at(8, 0) + x.at(3, 0)) * (-x.at(8, 0) + x.at(3, 0))),
+        -x.at(6, 0) * exp(-x.at(6, 0) * (-x.at(9, 0) + x.at(5, 0))),
+        exp(x.at(0, 0) - x.at(3, 0) - x.at(8, 0)),
+        -1.5 * sin(3. * x.at(9, 0) * x.at(1, 0)) * x.at(9, 0),
+        -x.at(5, 0),
+        -exp(x.at(0, 0) - x.at(3, 0) - x.at(8, 0)),
+        2. * x.at(4, 0) / x.at(7, 0),
+        -x.at(2, 0),
         0.,
-        -x(4, 0) * x(4, 0) / (x(7, 0) * x(7, 0)),
-        -exp(x(0, 0) - x(3, 0) - x(8, 0)),
-        -1.5 * sin(3. * x(9, 0) * x(1, 0)) * x(1, 0),
-        cos(x(3, 0)),
-        3. * x(1, 0) * x(1, 0) * x(6, 0),
+        -x.at(4, 0) * x.at(4, 0) / (x.at(7, 0) * x.at(7, 0)),
+        -exp(x.at(0, 0) - x.at(3, 0) - x.at(8, 0)),
+        -1.5 * sin(3. * x.at(9, 0) * x.at(1, 0)) * x.at(1, 0),
+        cos(x.at(3, 0)),
+        3. * x.at(1, 0) * x.at(1, 0) * x.at(6, 0),
         1.,
-        -(x(0, 0) - x(5, 0)) * sin(x(3, 0)),
-        cos(x(9, 0) / x(4, 0) + x(7, 0)) * x(9, 0) / (x(4, 0) * x(4, 0)),
-        -cos(x(3, 0)),
-        x(1, 0) * x(1, 0) * x(1, 0),
-        -cos(x(9, 0) / x(4, 0) + x(7, 0)),
+        -(x.at(0, 0) - x.at(5, 0)) * sin(x.at(3, 0)),
+        cos(x.at(9, 0) / x.at(4, 0) + x.at(7, 0)) * x.at(9, 0) / (x.at(4, 0) * x.at(4, 0)),
+        -cos(x.at(3, 0)),
+        x.at(1, 0) * x.at(1, 0) * x.at(1, 0),
+        -cos(x.at(9, 0) / x.at(4, 0) + x.at(7, 0)),
         0.,
-        -cos(x(9, 0) / x(4, 0) + x(7, 0)) / x(4, 0),
-        2. * x(4, 0) * (x(0, 0) - 2. * x(5, 0)),
-        -x(6, 0) * exp(x(1, 0) * x(6, 0) + x(9, 0)),
-        -2. * cos(-x(8, 0) + x(2, 0)),
+        -cos(x.at(9, 0) / x.at(4, 0) + x.at(7, 0)) / x.at(4, 0),
+        2. * x.at(4, 0) * (x.at(0, 0) - 2. * x.at(5, 0)),
+        -x.at(6, 0) * exp(x.at(1, 0) * x.at(6, 0) + x.at(9, 0)),
+        -2. * cos(-x.at(8, 0) + x.at(2, 0)),
         1.5,
-        (x(0, 0) - 2. * x(5, 0)) * (x(0, 0) - 2. * x(5, 0)),
-        -4. * x(4, 0) * (x(0, 0) - 2. * x(5, 0)),
-        -x(1, 0) * exp(x(1, 0) * x(6, 0) + x(9, 0)),
+        (x.at(0, 0) - 2. * x.at(5, 0)) * (x.at(0, 0) - 2. * x.at(5, 0)),
+        -4. * x.at(4, 0) * (x.at(0, 0) - 2. * x.at(5, 0)),
+        -x.at(1, 0) * exp(x.at(1, 0) * x.at(6, 0) + x.at(9, 0)),
         0.,
-        2. * cos(-x(8, 0) + x(2, 0)),
-        -exp(x(1, 0) * x(6, 0) + x(9, 0)),
+        2. * cos(-x.at(8, 0) + x.at(2, 0)),
+        -exp(x.at(1, 0) * x.at(6, 0) + x.at(9, 0)),
         -3.,
-        -2. * x(7, 0) * x(9, 0) * x(6, 0),
+        -2. * x.at(7, 0) * x.at(9, 0) * x.at(6, 0),
         0.,
-        exp(x(4, 0) + x(3, 0)),
-        exp(x(4, 0) + x(3, 0)),
-        -7. / (x(5, 0) * x(5, 0)),
-        -2. * x(1, 0) * x(7, 0) * x(9, 0),
-        -2. * x(1, 0) * x(9, 0) * x(6, 0),
+        exp(x.at(4, 0) + x.at(3, 0)),
+        exp(x.at(4, 0) + x.at(3, 0)),
+        -7. / (x.at(5, 0) * x.at(5, 0)),
+        -2. * x.at(1, 0) * x.at(7, 0) * x.at(9, 0),
+        -2. * x.at(1, 0) * x.at(9, 0) * x.at(6, 0),
         3.,
-        -2. * x(1, 0) * x(7, 0) * x(6, 0),
-        x(9, 0),
-        x(8, 0),
-        -x(7, 0),
-        cos(x(3, 0) + x(4, 0) + x(5, 0)) * x(6, 0),
-        cos(x(3, 0) + x(4, 0) + x(5, 0)) * x(6, 0),
-        cos(x(3, 0) + x(4, 0) + x(5, 0)) * x(6, 0),
-        sin(x(3, 0) + x(4, 0) + x(5, 0)),
-        -x(2, 0),
-        x(1, 0),
-        x(0, 0)
+        -2. * x.at(1, 0) * x.at(7, 0) * x.at(6, 0),
+        x.at(9, 0),
+        x.at(8, 0),
+        -x.at(7, 0),
+        cos(x.at(3, 0) + x.at(4, 0) + x.at(5, 0)) * x.at(6, 0),
+        cos(x.at(3, 0) + x.at(4, 0) + x.at(5, 0)) * x.at(6, 0),
+        cos(x.at(3, 0) + x.at(4, 0) + x.at(5, 0)) * x.at(6, 0),
+        sin(x.at(3, 0) + x.at(4, 0) + x.at(5, 0)),
+        -x.at(2, 0),
+        x.at(1, 0),
+        x.at(0, 0)
     };
     return result;
 }
@@ -234,8 +238,8 @@ cx_matrix<double, 2, 1> test_system(const cx_matrix<double, 2, 1>& x)
 {
     cx_matrix<double, 2, 1> result
     {
-        sin(2. * x(0, 0) - x(1, 0)) - 1.2 * x(0, 0) - 0.4,
-        0.8 * x(0, 0) * x(0, 0) + 1.5 * x(1, 0) * x(1, 0) - 1.
+        sin(2.0 * x.at(0, 0) - x.at(1, 0)) - 1.2 * x.at(0, 0) - 0.4,
+        0.8 * x.at(0, 0) * x.at(0, 0) + 1.5 * x.at(1, 0) * x.at(1, 0) - 1.0
     };
     return result;
 }
@@ -244,10 +248,10 @@ cx_matrix<double, 2, 2> test_diff(const cx_matrix<double, 2, 1>& x)
 {
     cx_matrix<double, 2, 2> result
     {
-        2. * cos(2. * x(0, 0) - x(1, 0)) - 1.2,
-        1.6 * x(0, 0),
-        -cos(2. * x(0, 0) - x(1, 0)),
-        3. * x(1, 0),
+        2.0 * cos(2. * x.at(0, 0) - x.at(1, 0)) - 1.2,
+        1.6 * x.at(0, 0),
+        -cos(2. * x.at(0, 0) - x.at(1, 0)),
+        3.0 * x.at(1, 0),
     };
     return result;
 }
@@ -264,11 +268,11 @@ template <class Type, class Function>
 constexpr Type bisection_method(Type xn, Type xk, Function&& f,
                                 const Type eps = kDefault_eps<Type>)
 {
-    if (f(xn) == static_cast<Type>(0))
+    if (f(xn) == Type{})
     {
         return xn;
     }
-    if (f(xk) == static_cast<Type>(0))
+    if (f(xk) == Type{})
     {
         return xk;
     }
@@ -278,7 +282,7 @@ constexpr Type bisection_method(Type xn, Type xk, Function&& f,
     {
         Type dx = (xk - xn) / 2.0;
         xi = xn + dx;
-        if (f(xn) * f(xk) < static_cast<Type>(0))
+        if (f(xn) * f(xk) < Type{})
         {
             xk = xi;
         }
@@ -299,7 +303,7 @@ constexpr std::pair<Type, Type> bisection_localize(Type xn, Type xk, Function&& 
     while (xk - xn > eps)
     {
         xi = (xn + xk) / 2.0;
-        if (f(xk) * f(xi) < static_cast<Type>(0))
+        if (f(xk) * f(xi) < Type{})
         {
             xn = xi;
             break;
@@ -347,17 +351,15 @@ constexpr std::tuple<Type, Type, long> newton_method(Function&& f, Derivative&& 
 }
 
 
-template <class Type, std::size_t Row, std::size_t Columns = 1>
-constexpr Type difference(const cx_matrix<Type, Row, Columns>& lhs,
-                          const cx_matrix<Type, Row, Columns>& rhs) noexcept
+template <class Type, std::size_t Row>
+constexpr Type difference(const cx_matrix<Type, Row, 1>& lhs,
+                          const cx_matrix<Type, Row, 1>& rhs) noexcept
 {
-    static_assert(Columns == 1, "Vectors have more than one columns!");
-
     Type result{};
     for (std::size_t i = 0; i < Row; ++i)
     {
-        result += lhs(i, 0) - rhs(i, 0);
-        //result = std::max(cx::abs(lhs(i, 0) - rhs(i, 0)), result);
+        result += lhs.at(i, 0) - rhs.at(i, 0);
+        // Another norm: result = std::max(cx::abs(lhs.at(i, 0) - rhs.at(i, 0)), result);
     }
     return cx::abs(result);
 }
@@ -368,7 +370,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0,
                          const Type eps = kDefault_eps<Type>)
 {
-    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(dF(x0), -1.0 * F(x0), eps);
+    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(dF(x0), -F(x0), eps);
     long iterations_counter = 1;
     long complexity = kComplexity_calc_jacobi<N> + kComplexity_calc_F<N> +
                       kComplexity_lupq<N> + kComplexity_solve<N>;
@@ -376,7 +378,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     while (difference(x1, x0) > eps && iterations_counter < kMax_iterations_newton)
     {
         x0 = x1;
-        x1 += lupq_solve(dF(x0), -1.0 * F(x0), eps);
+        x1 += lupq_solve(dF(x0), -F(x0), eps);
         ++iterations_counter;
         complexity += kComplexity_calc_jacobi<N> + kComplexity_calc_F<N> +
                       kComplexity_lupq<N> + kComplexity_solve<N>;
@@ -390,16 +392,16 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     mod_newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0, long k,
                              const Type eps = kDefault_eps<Type>)
 {
-    assert(k > 0);
+    //assert(k > 0);
 
     cx_matrix<Type, N, N> calc_jacobi = dF(x0);
     --k;
     long complexity = kComplexity_calc_jacobi<N>;
 
-    auto lupq_tuple = lupq_decompose(calc_jacobi, eps);
+    auto lupq_tuple = lupq_decompose(calc_jacobi);
     complexity += kComplexity_lupq<N>;
 
-    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -1.0 * F(x0), lupq_tuple, eps);
+    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -F(x0), lupq_tuple, eps);
     long iterations_counter = 1;
     complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
 
@@ -411,11 +413,11 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
         {
             --k;
             calc_jacobi = dF(x0);
-            lupq_tuple = lupq_decompose(calc_jacobi, eps);
+            lupq_tuple = lupq_decompose(calc_jacobi);
             complexity += kComplexity_calc_jacobi<N> + kComplexity_lupq<N>;
         }
 
-        x1 += lupq_solve(calc_jacobi, -1.0 * F(x0), lupq_tuple, eps);
+        x1 += lupq_solve(calc_jacobi, -F(x0), lupq_tuple, eps);
         ++iterations_counter;
         complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
     }
@@ -435,10 +437,10 @@ std::tuple<cx_matrix<Type, N, 1>, long, long>
     --k;
     long complexity = kComplexity_calc_jacobi<N>;
 
-    auto lupq_tuple = lupq_decompose(calc_jacobi, eps);
+    auto lupq_tuple = lupq_decompose(calc_jacobi);
     complexity += kComplexity_lupq<N>;
 
-    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -1.0 * F(x0), lupq_tuple, eps);
+    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -F(x0), lupq_tuple, eps);
     long iterations_counter = 1;
     complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
 
@@ -458,11 +460,11 @@ std::tuple<cx_matrix<Type, N, 1>, long, long>
         {
             k -= k == 0 ? 0 : 1;
             calc_jacobi = dF(x0);
-            lupq_tuple = lupq_decompose(calc_jacobi, eps);
+            lupq_tuple = lupq_decompose(calc_jacobi);
             complexity += kComplexity_calc_jacobi<N> + kComplexity_lupq<N>;
         }
 
-        x1 += lupq_solve(calc_jacobi, -1.0 * F(x0), lupq_tuple, eps);
+        x1 += lupq_solve(calc_jacobi, -F(x0), lupq_tuple, eps);
         ++iterations_counter;
         complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
 
@@ -517,16 +519,16 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     hybrid_newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0,
                                 const long k, const Type eps = kDefault_eps<Type>)
 {
-    assert(k > 0);
+    //assert(k > 0);
 
     cx_matrix<Type, N, N> calc_jacobi = dF(x0);
     long k_iter = 1;
     long complexity = kComplexity_calc_jacobi<N>;
 
-    auto lupq_tuple = lupq_decompose(calc_jacobi, eps);
+    auto lupq_tuple = lupq_decompose(calc_jacobi);
     complexity += kComplexity_lupq<N>;
 
-    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -1.0 * F(x0), lupq_tuple, eps);
+    cx_matrix<Type, N, 1> x1 = x0 + lupq_solve(calc_jacobi, -F(x0), lupq_tuple, eps);
     long iterations_counter = 1;
     complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
 
@@ -537,7 +539,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
         if (k_iter == k)
         {
             calc_jacobi = dF(x0);
-            lupq_tuple = lupq_decompose(calc_jacobi, eps);
+            lupq_tuple = lupq_decompose(calc_jacobi);
             k_iter = 1;
             complexity += kComplexity_calc_jacobi<N> + kComplexity_lupq<N>;
         }
@@ -546,7 +548,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
             ++k_iter;
         }
 
-        x1 += lupq_solve(calc_jacobi, -1.0 * F(x0), eps);
+        x1 += lupq_solve(calc_jacobi, -F(x0), eps);
         ++iterations_counter;
         complexity += kComplexity_solve<N> + kComplexity_calc_F<N>;
     }
@@ -599,8 +601,8 @@ TEST_METHOD(newton_test_solve_system)
     const auto answer = std::get<0>(newton_solve_system);
     const auto iterations = std::get<1>(newton_solve_system);
     const auto complexity = std::get<2>(newton_solve_system);
-    std::cout << "Epsilon = " << kEps << '\n';
-    std::cout << "x0:\n" << vector_x << "\n\n";
+    //std::cout << "Epsilon = " << kEps << '\n';
+    //std::cout << "x0:\n" << vector_x << "\n\n";
     std::cout << "Answer:\n" << answer << "\n\n";
     std::cout << "Number of iterations = " << iterations << '\n';
     std::cout << "Number of operations = " << complexity;
@@ -626,7 +628,7 @@ TEST_METHOD(mod_newton_test_solve_system)
         auto start = std::chrono::steady_clock::now();
         const auto mod_newton_solve_system = mod_newton_method_system(nonlinear_matrix,
                                                                       jacobi_matrix, vector_x,
-                                                                      k, true, kEps);
+                                                                      k, kEps);
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
         std::cout << k << " Calculation time: " << duration.count() << " ms\n";
 
@@ -640,10 +642,10 @@ TEST_METHOD(mod_newton_test_solve_system)
         std::cout << "Number of operations = " << complexity;
         std::cout << "\n\n------------------------------------\n\n";
 
-        std::cout << "Checking modified Newton solve (include eps = " << kEps << "):\n\n";
-        const auto newton_solve_check = nonlinear_matrix(answer);
-        std::cout << "Result of F(Answer): " << newton_solve_check;
-        std::cout << "\n\n------------------------------------\n\n";
+        //std::cout << "Checking modified Newton solve (include eps = " << kEps << "):\n\n";
+        //const auto newton_solve_check = nonlinear_matrix(answer);
+        //std::cout << "Result of F(Answer): " << newton_solve_check;
+        //std::cout << "\n\n------------------------------------\n\n";
     }
 }
 
@@ -662,8 +664,7 @@ TEST_METHOD(hybrid_newton_test_solve_system)
         auto start = std::chrono::steady_clock::now();
         const auto hybrid_newton_solve_system = hybrid_newton_method_system(nonlinear_matrix,
                                                                             jacobi_matrix,
-                                                                            vector_x,
-                                                                            k, kEps);
+                                                                            vector_x, k, kEps);
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
         std::cout << k << " Calculation time: " << duration.count() << " ms\n";
 

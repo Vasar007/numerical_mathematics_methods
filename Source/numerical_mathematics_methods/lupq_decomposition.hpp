@@ -18,32 +18,33 @@ namespace detail::lupq
 
 /// ===== ADDITION FUNCTIONAL SECTION =====
 template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
-                                                                  const std::size_t rank) noexcept
+constexpr ::vv::cx_matrix<Type, Rows, Columns>
+    lupq_get_u_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
+                             const std::size_t rank) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Rows, Columns>::size_type;
 
     ::vv::cx_matrix<Type, Rows, Columns> result_U{};
 
-    // Singular ::vv::cx_matrix.
+    // Singular matrix.
     if (rank < Rows || rank < Columns)
     {
         for (size_type i = 0; i < rank; ++i)
         {
             for (size_type j = i; j < rank; j++)
             {
-                result_U(i, j) = C(i, j);
+                result_U.at(i, j) = C.at(i, j);
             }
             for (size_type j = rank; j < Columns; j++)
             {
-                result_U(i, j) = static_cast<Type>(0);
+                result_U.at(i, j) = Type{};
             }
         }
         for (size_type i = rank; i < Rows; i++)
         {
             for (size_type j = i; j < Columns; j++)
             {
-                result_U(i, j) = static_cast<Type>(0);
+                result_U.at(i, j) = Type{};
             }
         }
     }
@@ -54,7 +55,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_solution_impl(const ::
         {
             for (size_type j = i; j < Columns; ++j)
             {
-                result_U(i, j) = C(i, j);
+                result_U.at(i, j) = C.at(i, j);
             }
         }
     }
@@ -64,8 +65,9 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_solution_impl(const ::
 
 
 template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
-                                                            const std::size_t rank) noexcept
+constexpr ::vv::cx_matrix<Type, Rows, Rows>
+    lupq_get_l_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
+                             const std::size_t rank) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Rows, Columns>::size_type;
     
@@ -76,13 +78,13 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_solution_impl(const ::vv:
     {
         for (size_type i = 0; i < rank; ++i)
         {
-            result_L(i, i) = static_cast<Type>(1);
+            result_L.at(i, i) = static_cast<Type>(1);
 
             if (i == 0) continue;
 
             for (size_type j = i - 1; ; --j)
             {
-                result_L(i, j) = C(i, j);
+                result_L.at(i, j) = C.at(i, j);
 
                 if (j == 0) break;
             }
@@ -93,7 +95,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_solution_impl(const ::vv:
 
             for (size_type j = i; ; --j)
             {
-                result_L(i, j) = static_cast<Type>(0);
+                result_L.at(i, j) = Type{};
 
                 if (j == 0) break;
             }
@@ -104,13 +106,13 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_solution_impl(const ::vv:
     {
         for (size_type i = 0; i < Rows; ++i)
         {
-            result_L(i, i) = static_cast<Type>(1);
+            result_L.at(i, i) = static_cast<Type>(1);
 
             if (i == 0) continue;
 
             for (size_type j = i - 1; ; --j)
             {
-                result_L(i, j) = C(i, j);
+                result_L.at(i, j) = C.at(i, j);
 
                 if (j == 0) break;
             }
@@ -122,7 +124,8 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_solution_impl(const ::vv:
 
 
 template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
+constexpr ::vv::cx_matrix<Type, Rows, Columns>
+    lupq_get_u_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Rows, Columns>::size_type;
 
@@ -131,7 +134,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_impl(const ::vv::cx_ma
     {
         for (size_type j = i; j < Columns; ++j)
         {
-            result_U(i, j) = C(i, j);
+            result_U.at(i, j) = C.at(i, j);
         }
     }
 
@@ -139,13 +142,14 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns> lupq_get_u_impl(const ::vv::cx_ma
 }
 
 template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
+constexpr ::vv::cx_matrix<Type, Rows, Rows>
+    lupq_get_l_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Rows, Columns>::size_type;
 
     ::vv::cx_matrix<Type, Rows, Rows> result_L{};
 
-    result_L(0, 0) = static_cast<Type>(1);
+    result_L.at(0, 0) = static_cast<Type>(1);
     for (size_type i = 1; i < Rows; ++i)
     {
         size_type temp_index = i >= Columns ? Columns - 1 : i;
@@ -153,11 +157,11 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_impl(const ::vv::cx_matri
         {
             if (Columns < Rows)
             {
-                result_L(i, j) = static_cast<Type>(0);
+                result_L.at(i, j) = Type{};
             }
             else
             {
-                result_L(i, j) = C(i, j);
+                result_L.at(i, j) = C.at(i, j);
             }
 
             if (j == 0) break;
@@ -169,14 +173,15 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_l_impl(const ::vv::cx_matri
 
 
 template <class Type, std::size_t Rows>
-constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_p_impl(const ::vv::cx_matrix<Type, Rows, 1>& P) noexcept
+constexpr ::vv::cx_matrix<Type, Rows, Rows>
+    lupq_get_p_impl(const ::vv::cx_matrix<Type, Rows, 1>& P) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Rows, Rows>::size_type;
 
     ::vv::cx_matrix<Type, Rows, Rows> result_P{};
-    for (size_type i = 0u; i < Rows; ++i)
+    for (size_type i = 0; i < Rows; ++i)
     {
-        result_P(i, P(i, 0)) = static_cast<Type>(1);
+        result_P.at(i, P.at(i, 0)) = static_cast<Type>(1);
     }
     
     return result_P;
@@ -184,15 +189,15 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows> lupq_get_p_impl(const ::vv::cx_matri
 
 
 template <class Type, std::size_t Columns>
-constexpr ::vv::cx_matrix<Type, Columns, Columns> lupq_get_q_impl(
-                                                const ::vv::cx_matrix<Type, Columns, 1>& Q) noexcept
+constexpr ::vv::cx_matrix<Type, Columns, Columns>
+    lupq_get_q_impl(const ::vv::cx_matrix<Type, Columns, 1>& Q) noexcept
 {
     using size_type = typename ::vv::cx_matrix<Type, Columns, Columns>::size_type;
 
     ::vv::cx_matrix<Type, Columns, Columns> result_Q{};
     for (size_type i = 0; i < Columns; ++i)
     {
-        result_Q(Q(i, 0), i) = static_cast<Type>(1);
+        result_Q.at(Q.at(i, 0), i) = static_cast<Type>(1);
     }
     return result_Q;
 }
@@ -202,9 +207,9 @@ constexpr ::vv::cx_matrix<Type, Columns, Columns> lupq_get_q_impl(
 
 /// ===== FUNCTION SECTION =====
 template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>, cx_matrix<Type, Columns, 1>,
-                     std::size_t, long>
-    lupq_decompose(cx_matrix<Type, Rows, Columns> mat, const Type = kDefault_eps<Type>)
+constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>,
+                     cx_matrix<Type, Columns, 1>, std::size_t, long>
+    lupq_decompose(cx_matrix<Type, Rows, Columns> mat)
 {
     using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
 
@@ -215,12 +220,12 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>, c
 
     for (size_type i = 0; i < Rows; ++i)
     {
-        P(i, 0) = static_cast<Type>(i);
+        P.at(i, 0) = static_cast<Type>(i);
     }
 
     for (size_type i = 0; i < Columns; ++i)
     {
-        Q(i, 0) = static_cast<Type>(i);
+        Q.at(i, 0) = static_cast<Type>(i);
     }
 
     size_type row_index{};
@@ -246,12 +251,10 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>, c
 
         for (size_type j = row_index + 1; j < Rows; ++j)
         {
-            //if (cx::abs(mat(j, column_index)) < eps) continue;
-
-            mat(j, column_index) /= mat(row_index, column_index);
+            mat.at(j, column_index) /= mat.at(row_index, column_index);
             for (size_type k = column_index + 1; k < Columns; ++k)					
             {
-                mat(j, k) -= mat(row_index, k) * mat(j, column_index);
+                mat.at(j, k) -= mat.at(row_index, k) * mat.at(j, column_index);
             }
         }
         ++row_index;
@@ -266,10 +269,9 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>, c
 template <class Type, std::size_t Rows, std::size_t Columns>
 constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, Rows>,
                      cx_matrix<Type, Rows, Rows>, cx_matrix<Type, Columns, Columns>, long>
-    lupq_get_components(const cx_matrix<Type, Rows, Columns>& mat,
-                          const Type eps = kDefault_eps<Type>)
+    lupq_get_components(const cx_matrix<Type, Rows, Columns>& mat)
 {
-    const auto [C, P, Q, rank, permutations_counter] = lupq_decompose(mat, eps);
+    const auto [C, P, Q, rank, permutations_counter] = lupq_decompose(mat);
 
     cx_matrix<Type, Rows, Columns> result_U = detail::lupq::lupq_get_u_impl(C);
     cx_matrix<Type, Rows, Rows> result_L = detail::lupq::lupq_get_l_impl(C);
@@ -280,32 +282,26 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, Rows>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A, std::size_t Columns_b>
-constexpr cx_matrix<Type, Columns_A, Columns_b>
+template <class Type, std::size_t Rows, std::size_t Columns_A>
+constexpr cx_matrix<Type, Columns_A, 1>
     lupq_solve(const cx_matrix<Type, Rows, Columns_A>& A,
-               const cx_matrix<Type, Rows, Columns_b>& b,
+               const cx_matrix<Type, Rows, 1>& b,
                const Type eps = kDefault_eps<Type>)
 {
-    static_assert(Columns_b == 1, "Matrix contains more than one columns in right "
-                                  "hand side vector!");
-                      
-    const auto lupq_tuple = lupq_decompose(A, eps);
+    const auto lupq_tuple = lupq_decompose(A);
 
     return lupq_solve(A, b, lupq_tuple, eps);
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A, std::size_t Columns_b>
-constexpr cx_matrix<Type, Columns_A, Columns_b>
+template <class Type, std::size_t Rows, std::size_t Columns_A>
+constexpr cx_matrix<Type, Columns_A, 1>
     lupq_solve(const cx_matrix<Type, Rows, Columns_A>& A,
-               const cx_matrix<Type, Rows, Columns_b>& b,
+               const cx_matrix<Type, Rows, 1>& b,
                const std::tuple<cx_matrix<Type, Rows, Columns_A>, cx_matrix<Type, Rows, 1>,
                                 cx_matrix<Type, Columns_A, 1>, std::size_t, long>& lupq_tuple,
                const Type eps = kDefault_eps<Type>)
 {
-    static_assert(Columns_b == 1, "Matrix contains more than one columns in right "
-                                  "hand side vector!");
-
     using size_type = typename cx_matrix<Type, Rows, Columns_A>::size_type;
 
     const auto [C, _P, _Q, rank, permutations_counter] = lupq_tuple;
@@ -315,30 +311,30 @@ constexpr cx_matrix<Type, Columns_A, Columns_b>
     cx_matrix<Type, Columns_A, 1> solution{};
     solution = P * b;
 
-    // Solve equation Lx = b
+    // Solve equation Lx = b.
     cx_matrix<Type, Rows, Rows> L = detail::lupq::lupq_get_l_solution_impl(C, rank);
     for (size_type i = 0; i < rank - 1; ++i)
     {
         for (size_type j = i + 1; j < rank; ++j)
         {
-            solution(j, 0) -= solution(i, 0) * L(j, i);
+            solution.at(j, 0) -= solution.at(i, 0) * L.at(j, i);
         }
     }
     
-    // Solve system Uy = b, xQ = y
+    // Solve system Uy = b, xQ = y.
     cx_matrix<Type, Rows, Columns_A> U = detail::lupq::lupq_get_u_solution_impl(C, rank);
     for (size_type i = rank - 1; i > 0; --i)
     {
-        solution(i, 0) /= U(i, i);
+        solution.at(i, 0) /= U.at(i, i);
 
         for (size_type j = i - 1; ; --j)
         {
-            solution(j, 0) -= solution(i, 0) * U(j, i);
+            solution.at(j, 0) -= solution.at(i, 0) * U.at(j, i);
 
             if (j == 0) break;
         }
     }
-    solution(0, 0) /= U(0, 0); // To make U(0, 0) == Type{1}
+    solution.at(0, 0) /= U.at(0, 0); // To make U(0, 0) == Type{1}
 
     // Checking the compatibility of the system of equations.
     if (rank < Rows)
@@ -346,22 +342,22 @@ constexpr cx_matrix<Type, Columns_A, Columns_b>
         cx_matrix<Type, Rows, Columns_A> origin = P * A * Q;
         for (size_type i = rank; i < Rows && i < Columns_A; ++i)
         {
-            Type x = solution(i, 0);
+            Type x = solution.at(i, 0);
             for (size_type j = 0; j < rank && j < Columns_A; ++j)
             {
-                x -= origin(i, j) * solution(j, 0);
+                x -= origin.at(i, j) * solution.at(j, 0);
             }
 
             if (cx::abs(x) > eps)
             {
-                return cx_matrix<Type, Rows, Columns_b>::get_error_matrix();
+                return cx_matrix<Type, Rows, 1>::get_error_matrix();
             }
         }
     }
 
     for (size_type i = rank; i < Columns_A; ++i)
     {
-        solution(i, 0) = static_cast<Type>(0);
+        solution.at(i, 0) = Type{};
     }
 
     return Q * solution;

@@ -69,7 +69,7 @@ constexpr double newton_cotes(Function&& f, const double a, const double b,
         {
             f_subval += Ci.at(j) * f(seg_a + j * (seg_b - seg_a) / degree);
         }
-        f_val += ((seg_b - seg_a) / divisor) * f_subval;
+        f_val += (seg_b - seg_a) / divisor * f_subval;
     }
     return f_val;
 }

@@ -13,42 +13,39 @@ namespace vv
 {
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr std::array<cx_matrix<Type, Rows, Columns>, 2>
-    lu_decompose(const cx_matrix<Type, Rows, Columns>& mat)
+template <class Type, std::size_t Size>
+constexpr std::array<cx_matrix<Type, Size, Size>, 2>
+    lu_decompose(const cx_matrix<Type, Size, Size>& mat)
 {
-    static_assert(Rows == Columns, "Matrix is not quadrant!");
+    using size_type = typename cx_matrix<Type, Size, Size>::size_type;
 
-    constexpr std::size_t N = Rows;
-    using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
-
-    cx_matrix<Type, Rows, Columns> lower{};
-    cx_matrix<Type, Rows, Columns> upper{};
+    cx_matrix<Type, Size, Size> lower{};
+    cx_matrix<Type, Size, Size> upper{};
 
     // Decomposing cx_matrix into Upper and Lower triangular cx_matrix.
-    for (size_type i = 0; i < N; ++i)
+    for (size_type i = 0; i < Size; ++i)
     {
         // Upper Triangular.
-        for (size_type k = i; k < N; ++k)
+        for (size_type k = i; k < Size; ++k)
         {
             // Summation of L(i, j) * U(j, k).
             Type sum{};
             for (size_type j = 0; j < i; ++j)
             {
-                sum += (lower(i, j) * upper(j, k));
+                sum += lower.at(i, j) * upper.at(j, k);
             }
  
             // Evaluating U(i, k).
-            upper(i, k) = mat(i, k) - sum;
+            upper.at(i, k) = mat.at(i, k) - sum;
         }
  
         // Lower Triangular.
-        for (size_type k = i; k < N; ++k)
+        for (size_type k = i; k < Size; ++k)
         {
             if (i == k)
             {
                 // Diagonal as 1.
-                lower(i, i) = static_cast<Type>(1);
+                lower.at(i, i) = static_cast<Type>(1);
             }
             else
             {
@@ -56,32 +53,28 @@ constexpr std::array<cx_matrix<Type, Rows, Columns>, 2>
                 Type sum{};
                 for (size_type j = 0; j < i; ++j)
                 {
-                    sum += (lower(k, j) * upper(j, i));
+                    sum += lower.at(k, j) * upper.at(j, i);
                 }
                 // Evaluating L(k, i).
-                lower(k, i) = (mat(k, i) - sum) / upper(i, i);
+                lower.at(k, i) = (mat.at(k, i) - sum) / upper.at(i, i);
             }
         }
-    } // for (size_type i = 0; i < N; ++i)
+    } // for (size_type i = 0; i < Size; ++i)
 
     return { lower, upper };
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr long rank(const cx_matrix<Type, Rows, Columns>& mat)
+template <class Type, std::size_t Size>
+constexpr long rank(const cx_matrix<Type, Size, Size>& mat)
 {
-    static_assert(Rows == Columns, "Matrix is not quadrant!");
+    using size_type = typename cx_matrix<Type, Size, Size>::size_type;
 
-    using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
-    constexpr std::size_t N = Rows;
-    
     long rank = 0;
     const auto [L, U] = lu_decompose(mat);
-    
-    for (size_type i = 0; i < N; ++i)
+    for (size_type i = 0; i < Size; ++i)
     {
-        if (U(i, N - 1) != static_cast<Type>(0))
+        if (U.at(i, Size - 1) != Type{})
         {
             ++rank;
         }
@@ -90,22 +83,19 @@ constexpr long rank(const cx_matrix<Type, Rows, Columns>& mat)
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr Type lu_determenant(const cx_matrix<Type, Rows, Columns>& mat)
+template <class Type, std::size_t Size>
+constexpr Type lu_determenant(const cx_matrix<Type, Size, Size>& mat)
 {
-    static_assert(Rows == Columns, "Matrix is not quadrant!");
-
-    using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
-    constexpr std::size_t N = Rows;
+    using size_type = typename cx_matrix<Type, Size, Size>::size_type;
 
     const auto [L, U] = lu_decompose(mat);
 
-    Type detL = L(0, 0);
-    Type detU = U(0, 0);
-    for (size_type i = 1; i < N; ++i)
+    Type detL = L.at(0, 0);
+    Type detU = U.at(0, 0);
+    for (size_type i = 1; i < Size; ++i)
     {
-        detL *= L(i, i);
-        detU *= U(i, i);
+        detL *= L.at(i, i);
+        detU *= U.at(i, i);
     }
 
     return detL * detU;

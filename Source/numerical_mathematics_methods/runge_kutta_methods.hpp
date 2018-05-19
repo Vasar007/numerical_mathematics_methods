@@ -83,8 +83,8 @@ void out_data(const std::string& file_name, const std::string_view mode,
     out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
     for (std::size_t i = 0; i < x.get_rows_number(); ++i)
     {
-        out_file << x(i, 0) << ' ' << y(i, 0) << ' ' << y(i, 1) << ' ' << y(i, 2) << ' ' << y(i, 3)
-            << '\n';
+        out_file << x.at(i, 0) << ' ' << y.at(i, 0) << ' ' << y.at(i, 1) << ' ' << y.at(i, 2)
+            << ' ' << y.at(i, 3) << '\n';
     }
 }
 
@@ -111,14 +111,14 @@ void out_data(const std::string& file_name, const std::string_view mode,
     out_file << mode << '|' << param << '|' << title << '|' << x_label << '|' << y_label << '\n';
     for (std::size_t i = 0; i < x1.get_rows_number(); ++i)
     {
-        out_file << x1(i, 0) << ' ' << y1(i, 0) << ' ' << y1(i, 1) << ' ' << y1(i, 2) << ' '
-            << y1(i, 3) << '\n';
+        out_file << x1.at(i, 0) << ' ' << y1.at(i, 0) << ' ' << y1.at(i, 1) << ' ' << y1.at(i, 2)
+            << ' ' << y1.at(i, 3) << '\n';
     }
     out_file << "#\n";
     for (std::size_t i = 0; i < x2.get_rows_number(); ++i)
     {
-        out_file << x2(i, 0) << ' ' << y2(i, 0) << ' ' << y2(i, 1) << ' ' << y2(i, 2) << ' '
-            << y2(i, 3) << '\n';
+        out_file << x2.at(i, 0) << ' ' << y2.at(i, 0) << ' ' << y2.at(i, 1) << ' ' << y2.at(i, 2)
+            << ' ' << y2.at(i, 3) << '\n';
     }
 }
 
@@ -158,12 +158,12 @@ calc_true(const double a, const double b, const double h, const matrix<double>& 
     matrix<double> Y(n + 1, kNumber_F);
     matrix<double> X(n + 1, 1);
 
-    X(0, 0) = x0(0, 0);
-    Y(0) = y0(0);
+    X.at(0, 0) = x0.at(0, 0);
+    Y.at(0) = y0.at(0);
     for (std::size_t i = 1; i <= n; ++i)
     {
-        X(i, 0) = a + i * h;
-        Y(i) = f(X(i, 0));
+        X.at(i, 0) = a + i * h;
+        Y.at(i) = f(X.at(i, 0));
     }
     return { X, Y };
 }
@@ -217,10 +217,10 @@ void runga_kutta_2(const double c2, const double a, const double a21, const doub
                    const double b2, const double h, const std::size_t i, ::vv::matrix<double>& X,
                    ::vv::matrix<double>& K1, ::vv::matrix<double>& K2, ::vv::matrix<double>& Y)
 {
-    X(i, 0) = a + i * h;
-    K1(i) = h * F(X(i - 1, 0), Y(i - 1));
-    K2(i) = h * F(X(i - 1, 0) + c2 * h, Y(i - 1) + a21 * K1(i));
-    Y(i) = Y(i - 1) + (b1 * K1(i) + b2 * K2(i));
+    X.at(i, 0) = a + i * h;
+    K1.at(i) = h * F(X.at(i - 1, 0), Y.at(i - 1));
+    K2.at(i) = h * F(X.at(i - 1, 0) + c2 * h, Y.at(i - 1) + a21 * K1.at(i));
+    Y.at(i) = Y.at(i - 1) + (b1 * K1.at(i) + b2 * K2.at(i));
 }
 
 
@@ -260,12 +260,12 @@ void runga_kutta_4(const double a, const double h, const std::size_t i, ::vv::ma
                    ::vv::matrix<double>& K1, ::vv::matrix<double>& K2, ::vv::matrix<double>& K3,
                    ::vv::matrix<double>& K4, ::vv::matrix<double>& Y)
 {
-    X(i, 0) = a + i * h;
-    K1(i) = h * F(X(i - 1, 0), Y(i - 1));
-    K2(i) = h * F(X(i - 1, 0) + h / 3.0, Y(i - 1) + K1(i) / 3.0);
-    K3(i) = h * F(X(i - 1, 0) + 2.0 * h / 3.0, Y(i - 1) - K1(i) / 3.0 + K2(i));
-    K4(i) = h * F(X(i - 1, 0) + h, Y(i - 1) + K1(i) - K2(i) + K3(i));
-    Y(i) = Y(i - 1) + (K1(i) + 3.0 * K2(i) + 3.0 * K3(i) + K4(i)) / 8.0;
+    X.at(i, 0) = a + i * h;
+    K1.at(i) = h * F(X.at(i - 1, 0), Y.at(i - 1));
+    K2.at(i) = h * F(X.at(i - 1, 0) + h / 3.0, Y.at(i - 1) + K1.at(i) / 3.0);
+    K3.at(i) = h * F(X.at(i - 1, 0) + 2.0 * h / 3.0, Y.at(i - 1) - K1.at(i) / 3.0 + K2.at(i));
+    K4.at(i) = h * F(X.at(i - 1, 0) + h, Y.at(i - 1) + K1.at(i) - K2.at(i) + K3.at(i));
+    Y.at(i) = Y.at(i - 1) + (K1.at(i) + 3.0 * K2.at(i) + 3.0 * K3.at(i) + K4.at(i)) / 8.0;
 }
 
 } // namespace detail
@@ -288,8 +288,8 @@ runge_kutta_2(const double c2, const double a, const double b, const double h,
     matrix<double> Y(n + 1, kNumber_F);
     matrix<double> X(n + 1, 1);
 
-    X(0, 0) = x0(0, 0);
-    Y(0) = y0(0);
+    X.at(0, 0) = x0.at(0, 0);
+    Y.at(0) = y0.at(0);
     for (std::size_t i = 1; i <= n; ++i)
     {
         detail::runga_kutta_2(c2, a, a21, b1, b2, h, i, X, K1, K2, Y);
@@ -311,8 +311,8 @@ runge_kutta_4(const double a, const double b, const double h, const matrix<doubl
     matrix<double> Y(n + 1, kNumber_F);
     matrix<double> X(n + 1, 1);
 
-    X(0, 0) = x0(0, 0);
-    Y(0) = y0(0);
+    X.at(0, 0) = x0.at(0, 0);
+    Y.at(0) = y0.at(0);
     for (std::size_t i = 1; i <= n; ++i)
     {
         detail::runga_kutta_4(a, h, i, X, K1, K2, K3, K4, Y);
@@ -347,7 +347,7 @@ std::vector<std::pair<double, double>> process_data(const matrix<double>& x,
     result.reserve(x.get_rows_number());
     for (std::size_t i = 0; i < x.get_rows_number(); ++i)
     {
-        result.emplace_back(x(i, 0), norm(y(i) - y1(i)));
+        result.emplace_back(x.at(i, 0), norm(y.at(i) - y1.at(i)));
     }
 
     return result;
@@ -398,8 +398,8 @@ double calculate(const double c2, const double a, const double b, const double h
     const auto [X1, Y1] = runge_kutta_2(c2, a, b, h, x0, y0);
     const auto [X1_2, Y1_2] = runge_kutta_2(c2, a, b, h / 2.0, x0, y0);
     
-    const detail::matrix::container<double> yn = Y1(n);
-    const detail::matrix::container<double> y2n = Y1_2(n2);
+    const detail::matrix::container<double> yn = Y1.at(n);
+    const detail::matrix::container<double> y2n = Y1_2.at(n2);
 
     constexpr std::size_t p = 2;
     const double R2n = norm(y2n - yn) / (std::pow(2, p) - 1.0);
@@ -421,8 +421,8 @@ calculate_last(const double c2, const double a, const double b, const double h,
     const auto[X1, Y1] = runge_kutta_2(c2, a, b, h, x0, y0);
     const auto[X1_2, Y1_2] = runge_kutta_2(c2, a, b, h / 2.0, x0, y0);
 
-    const detail::matrix::container<double> yn = Y1(n);
-    const detail::matrix::container<double> y2n = Y1_2(n2);
+    const detail::matrix::container<double> yn = Y1.at(n);
+    const detail::matrix::container<double> y2n = Y1_2.at(n2);
 
     constexpr std::size_t p = 2;
     const double Rn = norm(y2n - yn) / (1.0 - 1.0 / std::pow(2.0, p));
@@ -442,8 +442,8 @@ double calculate_opp(const double a, const double b, const double h,
     const auto [X2, Y2] = runge_kutta_4(a, b, h, x0, y0);
     const auto [X2_2, Y2_2] = runge_kutta_4(a, b, h / 2.0, x0, y0);
 
-    const detail::matrix::container<double> yn_opp = Y2(n);
-    const detail::matrix::container<double> y2n_opp = Y2_2(n2);
+    const detail::matrix::container<double> yn_opp = Y2.at(n);
+    const detail::matrix::container<double> y2n_opp = Y2_2.at(n2);
 
     constexpr std::size_t p = 4;
     const double R2n = norm(y2n_opp - yn_opp) / (std::pow(2, p) - 1.0);
@@ -464,8 +464,8 @@ calculate_last_opp(const double a, const double b, const double h, const matrix<
     const auto [X1, Y1] = runge_kutta_4(a, b, h, x0, y0);
     const auto [X1_2, Y1_2] = runge_kutta_4(a, b, h / 2.0, x0, y0);
 
-    const detail::matrix::container<double> yn_opp = Y1(n);
-    const detail::matrix::container<double> y2n_opp = Y1_2(n2);
+    const detail::matrix::container<double> yn_opp = Y1.at(n);
+    const detail::matrix::container<double> y2n_opp = Y1_2.at(n2);
 
     constexpr std::size_t p = 4;
     const double Rn = norm(y2n_opp - yn_opp) / (1.0 - 1.0 / std::pow(2.0, p));
@@ -480,20 +480,20 @@ double calculate_h0(const double rtol, const double atol, const std::size_t p,
 {
     const auto abs_compare = [](const double a1, const double a2)
                              { return std::abs(a1) < std::abs(a2); };
-    const double tol = norm(y0(0)) * rtol + atol;
+    const double tol = norm(y0.at(0)) * rtol + atol;
     // Step 1:
-    detail::matrix::container<double> f0 = F(x0(0, 0), y0(0));
+    detail::matrix::container<double> f0 = F(x0.at(0, 0), y0.at(0));
 
     // Step 2:
-    double max_x = *std::max_element(std::begin(x0(0)), std::end(x0(0)), abs_compare);
+    double max_x = *std::max_element(std::begin(x0.at(0)), std::end(x0.at(0)), abs_compare);
     double delta = std::pow(1.0 / (max_x + 1.0), p + 1) + std::pow(norm(f0), p + 1);
 
     // Step 3:
     double h1 = std::pow(tol / delta, 1.0 / (p + 1.0));
 
     // Step 4:
-    double ux = x0(0, 0) + h1;
-    detail::matrix::container<double> uy = y0(0) + h1 * F(x0(0, 0), y0(0));
+    double ux = x0.at(0, 0) + h1;
+    detail::matrix::container<double> uy = y0.at(0) + h1 * F(x0.at(0, 0), y0.at(0));
 
     // Step 5:
     detail::matrix::container<double> f0_ = F(ux, uy);
@@ -521,36 +521,38 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
 
     detail::matrix::container<double> K1_1;
     detail::matrix::container<double> K2_1;
-    detail::matrix::container<double> Y_1 = y0(0);
-    double X_1 = x0(0, 0);
+    detail::matrix::container<double> Y_1 = y0.at(0);
+    double X_1 = x0.at(0, 0);
 
     detail::matrix::container<double> Y_12;
     double X_12;
 
     detail::matrix::container<double> K1_2;
     detail::matrix::container<double> K2_2;
-    detail::matrix::container<double> Y_2 = y0(0);
-    double X_2 = x0(0, 0);
+    detail::matrix::container<double> Y_2 = y0.at(0);
+    double X_2 = x0.at(0, 0);
 
-    X(0, 0) = x0(0, 0);
-    Y(0) = y0(0);
-    data_y_true(0) = y0(0);
+    X.at(0, 0) = x0.at(0, 0);
+    Y.at(0) = y0.at(0);
+    data_y_true.at(0) = y0.at(0);
 
     std::vector<double> h_vec{ calculate_h0(rtol, atol, p, x0, y0) };
 
     std::size_t i = 1;
-    while (X(i - 1, 0) + h_vec.at(i - 1) <= b)
+    while (X.at(i - 1, 0) + h_vec.at(i - 1) <= b)
     {
         std::cout << "Step = " << (i - 1) << " \th = " << h_vec.at(i - 1) << '\t';
-        const detail::matrix::container<double> F_xy = detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1),
-                                                                X_1, K1_1, K2_1, Y_1, Y(i - 1));
+        const detail::matrix::container<double> F_xy = detail::runga_kutta_2(c2, a21, b1, b2,
+                                                                h_vec.at(i - 1), X_1, K1_1, K2_1,
+                                                                Y_1, Y.at(i - 1));
 
-        detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2, Y(i - 1), F_xy);
+        detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2,
+                              Y.at(i - 1), F_xy);
         X_12 = X_2;
         Y_12 = Y_2;
         detail::runga_kutta_2(c2, a21, b1, b2, h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, Y_2, Y_2);
 
-        const double tol = rtol * std::max({ norm(Y(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
+        const double tol = rtol * std::max({ norm(Y.at(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
         const double rn = norm(Y_2 - Y_1) / (1.0 -  1.0 / std::pow(2, p));
 
         if (rn > tol * std::pow(2.0, p))
@@ -567,11 +569,11 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             h_not_acc.emplace_back(X_1, h_vec.at(i - 1));
 
             h_vec.emplace_back(h_vec.at(i - 1) / 2.0);
-            Y(i) = Y_2;
-            X(i, 0) = X_1;
-            data_y_true(i) = f(X_1);
+            Y.at(i) = Y_2;
+            X.at(i, 0) = X_1;
+            data_y_true.at(i) = f(X_1);
 
-            quality.emplace_back(X_1, norm(data_y_true(i) - Y_2) / rn);
+            quality.emplace_back(X_1, norm(data_y_true.at(i) - Y_2) / rn);
             ++i;
 
             std::cout << "Chosen 2 way.\n";
@@ -581,11 +583,11 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             h_acc.emplace_back(X_1, h_vec.at(i - 1));
 
             h_vec.emplace_back(h_vec.at(i - 1));
-            Y(i) = Y_1;
-            X(i, 0) = X_1;
-            data_y_true(i) = f(X_1);
+            Y.at(i) = Y_1;
+            X.at(i, 0) = X_1;
+            data_y_true.at(i) = f(X_1);
 
-            quality.emplace_back(X_1, norm(data_y_true(i) - Y_1) / rn);
+            quality.emplace_back(X_1, norm(data_y_true.at(i) - Y_1) / rn);
             ++i;
 
             std::cout << "Chosen 3 way.\n";
@@ -603,11 +605,11 @@ calculate_with_h_auto(const double c2, const double a, const double b, const mat
             {
                 h_vec.push_back(h_vec.at(i - 1) * 2.0);
             }
-            Y(i) = Y_1;
-            X(i, 0) = X_1;
-            data_y_true(i) = f(X_1);
+            Y.at(i) = Y_1;
+            X.at(i, 0) = X_1;
+            data_y_true.at(i) = f(X_1);
 
-            quality.emplace_back(X_1, norm(data_y_true(i) - Y_1) / rn);
+            quality.emplace_back(X_1, norm(data_y_true.at(i) - Y_1) / rn);
             ++i;
 
             std::cout << "Chosen 4 way.\n";
@@ -636,8 +638,8 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
     detail::matrix::container<double> K2_1;
     detail::matrix::container<double> K3_1;
     detail::matrix::container<double> K4_1;
-    detail::matrix::container<double> Y_1 = y0(0);
-    double X_1 = x0(0, 0);
+    detail::matrix::container<double> Y_1 = y0.at(0);
+    double X_1 = x0.at(0, 0);
 
     detail::matrix::container<double> Y_12;
     double X_12;
@@ -646,28 +648,30 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
     detail::matrix::container<double> K2_2;
     detail::matrix::container<double> K3_2;
     detail::matrix::container<double> K4_2;
-    detail::matrix::container<double> Y_2 = y0(0);
-    double X_2 = x0(0, 0);
+    detail::matrix::container<double> Y_2 = y0.at(0);
+    double X_2 = x0.at(0, 0);
 
-    X(0, 0) = x0(0, 0);
-    Y(0) = y0(0);
-    data_y_true_opp(0) = y0(0);
+    X.at(0, 0) = x0.at(0, 0);
+    Y.at(0) = y0.at(0);
+    data_y_true_opp.at(0) = y0.at(0);
 
     std::vector<double> h_vec{ calculate_h0(rtol, atol, p, x0, y0) };
 
     std::size_t i = 1;
-    while (X(i - 1, 0) + h_vec.at(i - 1) <= b)
+    while (X.at(i - 1, 0) + h_vec.at(i - 1) <= b)
     {
         std::cout << "Step = " << (i - 1) << " \th = " << h_vec.at(i - 1) << '\t';
         const detail::matrix::container<double> F_xy = detail::runga_kutta_4(h_vec.at(i - 1), X_1,
-                                                            K1_1, K2_1, K3_1, K4_1, Y_1, Y(i - 1));
+                                                            K1_1, K2_1, K3_1, K4_1, Y_1,
+                                                            Y.at(i - 1));
 
-        detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y(i - 1), F_xy);
+        detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y.at(i - 1),
+                              F_xy);
         X_12 = X_2;
         Y_12 = Y_2;
         detail::runga_kutta_4(h_vec.at(i - 1) / 2.0, X_2, K1_2, K2_2, K3_2, K4_2, Y_2, Y_2);
 
-        const double tol = rtol * std::max({ norm(Y(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
+        const double tol = rtol * std::max({ norm(Y.at(i - 1)), norm(Y_1), norm(Y_2) }) + atol;
         const double rn = norm(Y_2 - Y_1) / (1.0 -  1.0 / std::pow(2, p));
 
         if (rn > tol * std::pow(2.0, p))
@@ -684,11 +688,11 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             h_not_acc_opp.emplace_back(X_1, h_vec.at(i - 1));
 
             h_vec.emplace_back(h_vec.at(i - 1) / 2.0);
-            Y(i) = Y_2;
-            X(i, 0) = X_1;
-            data_y_true_opp(i) = f(X_1);
+            Y.at(i) = Y_2;
+            X.at(i, 0) = X_1;
+            data_y_true_opp.at(i) = f(X_1);
 
-            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_2) / rn);
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp.at(i) - Y_2) / rn);
             ++i;
 
             std::cout << "Chosen 2 way.\n";
@@ -698,11 +702,11 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             h_acc_opp.emplace_back(X_1, h_vec.at(i - 1));
 
             h_vec.emplace_back(h_vec.at(i - 1));
-            Y(i) = Y_1;
-            X(i, 0) = X_1;
-            data_y_true_opp(i) = f(X_1);
+            Y.at(i) = Y_1;
+            X.at(i, 0) = X_1;
+            data_y_true_opp.at(i) = f(X_1);
 
-            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_1) / rn);
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp.at(i) - Y_1) / rn);
             ++i;
 
             std::cout << "Chosen 3 way.\n";
@@ -720,11 +724,11 @@ calculate_with_h_auto_opp(const double a, const double b, const matrix<double>& 
             {
                 h_vec.push_back(h_vec.at(i - 1) * 2.0);
             }
-            Y(i) = Y_1;
-            X(i, 0) = X_1;
-            data_y_true_opp(i) = f(X_1);
+            Y.at(i) = Y_1;
+            X.at(i, 0) = X_1;
+            data_y_true_opp.at(i) = f(X_1);
 
-            quality_opp.emplace_back(X_1, norm(data_y_true_opp(i) - Y_1) / rn);
+            quality_opp.emplace_back(X_1, norm(data_y_true_opp.at(i) - Y_1) / rn);
             ++i;
 
             std::cout << "Chosen 4 way.\n";
