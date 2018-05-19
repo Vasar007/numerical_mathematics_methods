@@ -23,10 +23,10 @@ constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A,
 
     long permutations_counter = static_cast<long>(Rows_A);
     cx_matrix<Type, Rows_A, 1> P{};
-    // Unit permutation cx_matrix, P[N] initialized with N.
+    // Unit permutation matrix, P[N] initialized with N.
     for (size_type i = 0; i < Rows_A; ++i)
     {
-        P(i, 0) = static_cast<Type>(i);
+        P.at(i, 0) = static_cast<Type>(i);
     }
     
     for (size_type i = 0; i < Columns_A; ++i)
@@ -35,7 +35,7 @@ constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A,
         size_type i_max = i;
         for (size_type k = i; k < Rows_A; ++k)
         {
-            const auto absA = cx::abs(A(k, i));
+            const auto absA = cx::abs(A.at(k, i));
             if (absA > max_A)
             { 
                 max_A = absA;
@@ -45,9 +45,11 @@ constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A,
 
         if (max_A < cx::abs(eps))
         { 
-            // Failure, cx_matrix is degenerate.
+            // Failure, matrix is degenerate.
             //throw std::domain_error("Matrix is singular!");
-            return { cx_matrix<Type, Rows_A, Columns_A>{}, cx_matrix<Type, Rows_A, 1>{}, -1 };
+            return { cx_matrix<Type, Rows_A, Columns_A>::get_error_matrix(),
+                     cx_matrix<Type, Rows_A, 1>::get_error_matrix(),
+                     -1 };
         }
 
         if (i_max != i)
@@ -62,26 +64,23 @@ constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A,
 
         for (size_type j = i + 1; j < Rows_A; ++j)
         {
-            A(j, i) /= A(i, i);
+            A.at(j, i) /= A.at(i, i);
             for (size_type k = i + 1; k < Columns_A; ++k)
             {
-                A(j, k) -= A(j, i) * A(i, k);
+                A.at(j, k) -= A.at(j, i) * A.at(i, k);
             }
         }
-    } // for (size_type i = 0u; i < N; ++i)
+    } // for (size_type i = 0; i < N; ++i)
     
     return { A, P, permutations_counter };
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A, std::size_t Columns_b>
+template <class Type, std::size_t Rows, std::size_t Columns_A>
 constexpr auto lup_solve(const cx_matrix<Type, Rows, Columns_A>& mat,
-                         const cx_matrix<Type, Rows, Columns_b>& b,
+                         const cx_matrix<Type, Rows, 1>& b,
                          const Type eps = kDefault_eps<Type>)
 {
-    static_assert(Columns_b == 1, "Matrix contains more than one columns in right "
-                                  "hand side vector!");
-                                   
     using size_type = typename cx_matrix<Type, Rows, Columns_A>::size_type;
 
     const auto [A, P, permutations_counter] = lup_decompose(mat, eps);
@@ -89,11 +88,11 @@ constexpr auto lup_solve(const cx_matrix<Type, Rows, Columns_A>& mat,
     cx_matrix<Type, Columns_A, 1> x{};
     for (size_type i = 0; i < Rows && i < Columns_A; ++i)
     {
-        x(i, 0) = b(static_cast<size_type>(P(i, 0)), 0);
+        x.at(i, 0) = b.at(static_cast<size_type>(P.at(i, 0)), 0);
 
         for (size_type k = 0; k < i; ++k)
         {
-            x(i, 0) -= A(i, k) * x(k, 0);
+            x.at(i, 0) -= A.at(i, k) * x.at(k, 0);
         }
     }
 
@@ -101,80 +100,74 @@ constexpr auto lup_solve(const cx_matrix<Type, Rows, Columns_A>& mat,
     {
         for (size_type k = i + 1; k < Rows && k < Columns_A; ++k)
         {
-            x(i, 0) -= A(i, k) * x(k, 0);
+            x.at(i, 0) -= A.at(i, k) * x.at(k, 0);
         }
 
-        x(i, 0) /= A(i, i);
-        if (i == 0u) break;
+        x.at(i, 0) /= A.at(i, i);
+        if (i == 0) break;
     }
     
     return x;
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr Type lup_determenant(const cx_matrix<Type, Rows, Columns>& mat,
+template <class Type, std::size_t Size>
+constexpr Type lup_determenant(const cx_matrix<Type, Size, Size>& mat,
                            const Type eps = kDefault_eps<Type>)
 {
-    static_assert(Rows == Columns, "Matrix is not quadrant!");
-
-    using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
-    constexpr std::size_t N = Rows;
+    using size_type = typename cx_matrix<Type, Size, Size>::size_type;
 
     const auto [A, P, permutations_counter] = lup_decompose(mat, eps); 
-    Type det = A(0, 0);
-    for (size_type i = 1; i < N; ++i)
+    Type det = A.at(0, 0);
+    for (size_type i = 1; i < Size; ++i)
     {
-        det *= A(i, i);
+        det *= A.at(i, i);
     }
 
-    return ((permutations_counter - N) % 2 == 0) ? det : -det;
+    return ((permutations_counter - Size) % 2 == 0) ? det : -det;
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
-constexpr auto lup_invert(const cx_matrix<Type, Rows, Columns>& mat,
+template <class Type, std::size_t Size>
+constexpr auto lup_invert(const cx_matrix<Type, Size, Size>& mat,
                           const Type eps = kDefault_eps<Type>)
 {
-    static_assert(Rows == Columns, "Matrix is not quadrant!");
-
-    constexpr std::size_t N = Rows;
-    using size_type = typename cx_matrix<Type, Rows, Columns>::size_type;
+    using size_type = typename cx_matrix<Type, Size, Size>::size_type;
 
     const auto [A, P, permutations_counter] = lup_decompose(mat, eps);
 
-    cx_matrix<Type, Rows, Columns> IA{};
-    for (size_type j = 0; j < N; ++j)
+    cx_matrix<Type, Size, Size> IA{};
+    for (size_type j = 0; j < Size; ++j)
     {
-        for (size_type i = 0; i < N; ++i)
+        for (size_type i = 0; i < Size; ++i)
         {
-            if (P(i, 0) == j)
+            if (P.at(i, 0) == j)
             { 
-                IA(i, j) = static_cast<Type>(1);
+                IA.at(i, j) = static_cast<Type>(1);
             }
             else
             {
-                IA(i, j) = static_cast<Type>(0);
+                IA.at(i, j) = Type{};
             }
 
             for (size_type k = 0; k < i; ++k)
             {
-                IA(i, j) -= A(i, k) * IA(k, j);
+                IA.at(i, j) -= A.at(i, k) * IA.at(k, j);
             }
         }
 
-        for (size_type i = N - 1; ; --i)
+        for (size_type i = Size - 1; ; --i)
         {
-            for (size_type k = i + 1; k < N; ++k)
+            for (size_type k = i + 1; k < Size; ++k)
             {
-                IA(i, j) -= A(i, k) * IA(k, j);
+                IA.at(i, j) -= A.at(i, k) * IA.at(k, j);
             }
 
-            IA(i, j) = IA(i, j) / A(i, i);
+            IA.at(i, j) = IA.at(i, j) / A.at(i, i);
 
             if (i == 0) break;
         }
-    } //  for (size_type j = 0; j < N; ++j)
+    } //  for (size_type j = 0; j < Size; ++j)
 
     return IA;
 }

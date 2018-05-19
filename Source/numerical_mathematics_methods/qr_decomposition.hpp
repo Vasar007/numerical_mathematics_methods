@@ -36,18 +36,18 @@ constexpr std::array<cx_matrix<Type, Rows, Columns>, 2>
         Type norm{};
         for (size_type j = i; j < Rows; ++j)
         {
-            u(j, 0) = R(j, i); // [j * Columns + i] 
-            norm += u(j, 0) * u(j, 0);
+            u.at(j, 0) = R.at(j, i); // [j * Columns + i] 
+            norm += u.at(j, 0) * u.at(j, 0);
         }
         norm = cx::sqrt(norm);
         
-        Type alpha = u(i, 0) < Type{} ? -norm : norm;
+        Type alpha = u.at(i, 0) < Type{} ? -norm : norm;
 
         norm = Type{};
         for (size_type j = i; j < Rows; ++j)
         {
-            v(j, 0) = (j == i ? u(j, 0) + alpha : u(j, 0));
-            norm += v(j, 0) * v(j, 0);
+            v.at(j, 0) = (j == i ? u.at(j, 0) + alpha : u.at(j, 0));
+            norm += v.at(j, 0) * v.at(j, 0);
         }
         norm = cx::sqrt(norm);
 
@@ -55,7 +55,7 @@ constexpr std::array<cx_matrix<Type, Rows, Columns>, 2>
 
         for (size_type j = i; j < Rows; ++j)
         {
-            v(j, 0) /= norm;
+            v.at(j, 0) /= norm;
         }
 
         P = I - (v * v.transpose()) * static_cast<Type>(2);

@@ -73,13 +73,6 @@ constexpr std::array<double, 3> gauss_coefficients_polynom(const std::array<doub
             * u.at(5)) / (u.at(2) * u.at(2) * u.at(2) - 2.0 * u.at(1) * u.at(2) * u.at(3) + u.at(0)
             * u.at(3) * u.at(3) + u.at(1) * u.at(1) * u.at(4) - u.at(0) * u.at(2) * u.at(4)))
     };
-    /*
-    a0 -> -((u3^3 - 2 u2 u3 u4 + u1 u4^2 + u2^2 u5 - u1 u3 u5) / (u2^3 - 2 u1 u2 u3 + u0 u3^2 + u1^2 u4 - u0 u2 u4)),
-
-    a1 -> -((-u2 u3^2 + u2^2 u4 + u1 u3 u4 - u0 u4^2 - u1 u2 u5 + u0 u3 u5)/(u2^3 - 2 u1 u2 u3 + u0 u3^2 + u1^2 u4 - u0 u2 u4)),
-
-    a2 -> -((u2^2 u3 - u1 u3^2 - u1 u2 u4 + u0 u3 u4 + u1^2 u5 - u0 u2 u5)/(u2^3 - 2 u1 u2 u3 + u0 u3^2 + u1^2 u4 - u0 u2 u4))
-    */
     return a;
 };
 

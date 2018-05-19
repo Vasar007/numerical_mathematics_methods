@@ -16,20 +16,20 @@ namespace vv
 namespace
 {
 
-constexpr double epsilon    = 0.000001;
-constexpr double epsilon_u  = epsilon / 5.26;
-constexpr double epsilon_v  = epsilon / 4.04;
-constexpr double epsilon_w  = epsilon / 4.04;
-constexpr double epsilon_z  = epsilon / 4;
+constexpr double epsilon   = 0.000001;
+constexpr double epsilon_u = epsilon / 5.26;
+constexpr double epsilon_v = epsilon / 4.04;
+constexpr double epsilon_w = epsilon / 4.04;
+constexpr double epsilon_z = epsilon / 4;
 
-constexpr double PI_DIV_4   = static_cast<double>(cx::detail::pi()) / 4.0;
-constexpr double PI_DIV_2   = static_cast<double>(cx::detail::pi()) / 2.0;
-constexpr double PI3_DIV_4  = static_cast<double>(cx::detail::pi()) * 3.0 / 4.0;
-constexpr double PI         = static_cast<double>(cx::detail::pi());
-constexpr double PI5_DIV_4  = static_cast<double>(cx::detail::pi()) * 5.0 / 4.0;
-constexpr double PI3_DIV_2  = static_cast<double>(cx::detail::pi()) * 3.0 / 2.0;
-constexpr double PI7_DIV_4  = static_cast<double>(cx::detail::pi()) * 7.0 / 4.0;
-constexpr double PI2        = static_cast<double>(cx::detail::pi()) * 2.0;
+constexpr double PI_DIV_4  = static_cast<double>(cx::detail::pi()) / 4.0;
+constexpr double PI_DIV_2  = static_cast<double>(cx::detail::pi()) / 2.0;
+constexpr double PI3_DIV_4 = static_cast<double>(cx::detail::pi()) * 3.0 / 4.0;
+constexpr double PI        = static_cast<double>(cx::detail::pi());
+constexpr double PI5_DIV_4 = static_cast<double>(cx::detail::pi()) * 5.0 / 4.0;
+constexpr double PI3_DIV_2 = static_cast<double>(cx::detail::pi()) * 3.0 / 2.0;
+constexpr double PI7_DIV_4 = static_cast<double>(cx::detail::pi()) * 7.0 / 4.0;
+constexpr double PI2       = static_cast<double>(cx::detail::pi()) * 2.0;
 
 } // anonymous namespace
 
@@ -51,7 +51,7 @@ constexpr double sin(const double arg, const double eps = epsilon)
 
     while (cx::abs(n_member) >= eps)
     {
-        n_member *= -arg * arg / ((2.0 * n) * (2.0 * n + 1));
+        n_member *= -arg * arg / ((2.0 * n) * (2.0 * n + 1.0));
         result += n_member;
         ++n;
     }
@@ -68,7 +68,7 @@ constexpr double cos(const double arg, const double eps = epsilon)
 
     while (cx::abs(n_member) >= eps)
     {
-        n_member *= -arg * arg / ((2.0 * n) * (2.0 * n - 1));
+        n_member *= -arg * arg / ((2.0 * n) * (2.0 * n - 1.0));
         result += n_member;
         ++n;
     }
@@ -129,29 +129,30 @@ constexpr double deduce(const double arg, const function_type flag, const double
     switch (flag)
     {
         case function_type::SIN:
-            if (-PI_DIV_4 <= arg && arg <= PI_DIV_4) return vv::sin(arg, eps);
-            if (PI_DIV_4 <= arg && arg <= PI_DIV_2) return vv::cos(PI_DIV_2 - arg, eps);
-            if (PI_DIV_2 <= arg && arg <= PI3_DIV_4) return vv::cos(arg - PI_DIV_2, eps);
-            if (PI3_DIV_4 <= arg && arg <= PI) return vv::sin(PI - arg, eps);
-            if (PI <= arg && arg <= PI5_DIV_4) return -vv::sin(arg - PI, eps);
+            if (-PI_DIV_4 <= arg && arg <= PI_DIV_4)  return  vv::sin(arg,             eps);
+            if ( PI_DIV_4 <= arg && arg <= PI_DIV_2)  return  vv::cos(PI_DIV_2 - arg,  eps);
+            if ( PI_DIV_2 <= arg && arg <= PI3_DIV_4) return  vv::cos(arg - PI_DIV_2,  eps);
+            if (PI3_DIV_4 <= arg && arg <= PI)        return  vv::sin(PI - arg,        eps);
+            if (       PI <= arg && arg <= PI5_DIV_4) return -vv::sin(arg - PI,        eps);
             if (PI5_DIV_4 <= arg && arg <= PI3_DIV_2) return -vv::cos(PI3_DIV_2 - arg, eps);
             if (PI3_DIV_2 <= arg && arg <= PI7_DIV_4) return -vv::cos(arg - PI3_DIV_2, eps);
-            if (PI7_DIV_4 <= arg && arg <= PI2) return vv::sin(arg - PI2, eps);
+            if (PI7_DIV_4 <= arg && arg <= PI2)       return  vv::sin(arg - PI2,       eps);
             break;
         
         case function_type::COS:
-            if (-PI_DIV_4 <= arg && arg <= PI_DIV_4) return vv::cos(arg, eps);
-            if (PI_DIV_4 <= arg && arg <= PI_DIV_2) return vv::sin(PI_DIV_2 - arg, eps);
-            if (PI_DIV_2 <= arg && arg <= PI3_DIV_4) return -vv::sin(arg - PI_DIV_2, eps);
-            if (PI3_DIV_4 <= arg && arg <= PI) return -vv::cos(PI - arg, eps);
-            if (PI <= arg && arg <= PI5_DIV_4) return -vv::cos(arg - PI, eps);
+            if (-PI_DIV_4 <= arg && arg <= PI_DIV_4)  return  vv::cos(arg,             eps);
+            if ( PI_DIV_4 <= arg && arg <= PI_DIV_2)  return  vv::sin(PI_DIV_2 - arg,  eps);
+            if ( PI_DIV_2 <= arg && arg <= PI3_DIV_4) return -vv::sin(arg - PI_DIV_2,  eps);
+            if (PI3_DIV_4 <= arg && arg <= PI)        return -vv::cos(PI - arg,        eps);
+            if (       PI <= arg && arg <= PI5_DIV_4) return -vv::cos(arg - PI,        eps);
             if (PI5_DIV_4 <= arg && arg <= PI3_DIV_2) return -vv::sin(PI3_DIV_2 - arg, eps);
-            if (PI3_DIV_2 <= arg && arg <= PI7_DIV_4) return vv::sin(arg - PI3_DIV_2, eps);
-            if (PI7_DIV_4 <= arg && arg <= PI2) return vv::cos(arg - PI2, eps);
+            if (PI3_DIV_2 <= arg && arg <= PI7_DIV_4) return  vv::sin(arg - PI3_DIV_2, eps);
+            if (PI7_DIV_4 <= arg && arg <= PI2)       return  vv::cos(arg - PI2,       eps);
             break;
 
         default:
             assert(false);
+            break;
     }
 
     return 0.0;
@@ -201,7 +202,7 @@ TEST_METHOD(functions_test)
 {
     std::cout << "Constexpr math functions:\n\n";
 
-    constexpr std::size_t num_of_values = 11u;
+    constexpr std::size_t num_of_values = 11;
     constexpr std::array<double, num_of_values> values = 
     { 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.3 };
 
@@ -215,7 +216,7 @@ TEST_METHOD(functions_test)
     std::cout << "DELTA: \n";
     for (std::size_t i = 0; i < num_of_values; ++i)
     {
-        std::cout << i << (i != 10 ? "       | " : "      | ");
+        std::cout << i <<  (i != 10 ? "       | " : "      | ");
         std::cout << results.at(0).at(i) << " | ";
         std::cout << results.at(1).at(i) << " | ";
         std::cout << cx::abs(results.at(1).at(i) - results.at(0).at(i)) << '\n';
