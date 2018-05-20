@@ -16,7 +16,11 @@
 
 /*
  *
- * As base for matrix class using https://github.com/akalicki/matrix
+ * TODO:
+ * 1) Improved performance for case when work_mode == mtx::normal. I mean that in this case we don't
+ *    need in vector of vectors and can use only single vector. For this idea need to add some
+ *    checks in all methods that work with data_container. Also need to banned all dynamically
+ *    methods for user.
  *
  */
 
@@ -64,16 +68,18 @@ public:
 
     static constexpr value_type EPS = static_cast<value_type>(1e-10);
 
+
     static_assert(std::is_arithmetic_v<value_type>, "Matrix elements type has to be arithmetic!");
 
 
     matrix() = default;
 
+
     matrix(const size_type rows, const size_type columns,
            const mtx::mode work_mode = mtx::mode::normal)
     : _rows(rows)
     , _columns(columns)
-    , _data(rows)
+    , _data(rows, container<value_type>(columns, value_type{}))
     , _mode(work_mode)
     { }
 
@@ -87,15 +93,26 @@ public:
     { }
 
 
-    matrix(const std::initializer_list<value_type> list)
+    matrix(const std::initializer_list<value_type> list,
+           const mtx::mode work_mode = mtx::mode::normal)
     : _data{ list }
-    , _mode(mtx::mode::normal)
+    , _mode(work_mode)
     {
-        // Stupid support of aggregate-initialization.
+        const auto pred = [](const container<value_type>& a, const container<value_type>& b)
+        {
+            return a.size() < b.size();
+        };
+        const auto [min_it, max_it] = std::minmax_element(std::begin(_data), std::end(_data), pred);
+
+        if (min_it->size() != max_it->size())
+        {
+            throw std::invalid_argument("Size of initializer list elements are not equal.");
+        }
         _rows = _data.size();
         _columns = _data.front().size();
     }
     
+
     ~matrix() noexcept = default;
     matrix(const matrix& other) = default;
     matrix& operator=(const matrix& other) = default;
@@ -134,73 +151,73 @@ public:
     }
 
 
-    decltype(auto) begin() noexcept
+    typename data_container::iterator begin() noexcept
     {
         return _data.begin();
     }
 
 
-    decltype(auto) begin() const noexcept
+    typename data_container::const_iterator begin() const noexcept
     {
         return _data.begin();
     }
 
 
-    decltype(auto) cbegin() const noexcept
+    typename data_container::const_iterator cbegin() const noexcept
     {
         return _data.cbegin();
     }
 
 
-    decltype(auto) end() noexcept
+    typename data_container::iterator end() noexcept
     {
         return _data.end();
     }
 
 
-    decltype(auto) end() const noexcept
+    typename data_container::const_iterator end() const noexcept
     {
         return _data.end();
     }
 
 
-    decltype(auto) cend() const noexcept
+    typename data_container::const_iterator cend() const noexcept
     {
         return _data.cend();
     }
 
 
-    decltype(auto) rbegin() noexcept
+    typename data_container::reverse_iterator rbegin() noexcept
     {
         return _data.rbegin();
     }
 
 
-    decltype(auto) rbegin() const noexcept
+    typename data_container::const_reverse_iterator rbegin() const noexcept
     {
         return _data.rbegin();
     }
 
 
-    decltype(auto) crbegin() const noexcept
+    typename data_container::const_reverse_iterator crbegin() const noexcept
     {
         return _data.crbegin();
     }
 
 
-    decltype(auto) rend() noexcept
+    typename data_container::reverse_iterator rend() noexcept
     {
         return _data.rend();
     }
 
 
-    decltype(auto) rend() const noexcept
+    typename data_container::const_reverse_iterator rend() const noexcept
     {
         return _data.rend();
     }
 
 
-    decltype(auto) crend() const noexcept
+    typename data_container::const_reverse_iterator crend() const noexcept
     {
         return _data.crend();
     }
@@ -215,18 +232,6 @@ public:
     const_data_container_reference data() const noexcept
     {
         return _data;
-    }
-
-
-    pointer raw_data() noexcept
-    {
-        return _data.data()->data();
-    }
-
-
-    const const_pointer raw_data() const noexcept
-    {
-        return _data.data()->data();
     }
 
 
@@ -250,12 +255,16 @@ public:
 
     void clear() noexcept
     {
+        _rows = 0;
+        _columns = 0;
         _data.clear();
     }
 
 
     void resize(const size_type count_rows, const size_type count_columns)
     {
+        _rows = count_rows;
+        _columns = count_columns;
         for (auto& row : _data)
         {
             row.resize(count_columns);
@@ -266,6 +275,8 @@ public:
 
     void resize(const size_type count_rows, const size_type count_columns, const value_type& value)
     {
+        _rows = count_rows;
+        _columns = count_columns;
         for (auto& row : _data)
         {
             row.resize(count_columns, value);
@@ -294,6 +305,88 @@ public:
     }
 
 
+    void push_back_row(const container<value_type>& value)
+    {
+        ++_rows;
+        _data.push_back(value);
+    }
+
+
+    void push_back_row(container<value_type>&& value)
+    {
+        ++_rows;
+        _data.push_back(std::forward<container<value_type>>(value));
+    }
+
+
+    void push_back_column(const value_type& value)
+    {
+        ++_columns;
+        for (auto& row : _data)
+        {
+            row.push_back(value);
+        }
+    }
+
+
+    void push_back_column(value_type&& value)
+    {
+        ++_columns;
+        for (auto& row : _data)
+        {
+            row.push_back(std::forward<value_type>(value));
+        }
+    }
+
+
+    void pop_back_row()
+    {
+        if (_rows == 0) return;
+
+        --_rows;
+        _data.pop_back();
+    }
+
+
+    container<value_type> pop_back_row(const bool)
+    {
+        if (_rows == 0) return container<value_type>{};
+
+        --_rows;
+        const container<value_type> removed = std::move(_data.back());
+        _data.pop_back();
+        return removed;
+    }
+
+
+    void pop_back_column()
+    {
+        if (_columns == 0) return;
+
+        --_columns;
+        for (auto& row : _data)
+        {
+            row.pop_back();
+        }
+    }
+
+
+    container<value_type> pop_back_column(const bool)
+    {
+        if (_columns == 0) return container<value_type>{};
+
+        --_columns;
+        container<value_type> removed;
+        removed.reserve(_rows);
+        for (auto& row : _data)
+        {
+            removed.emplace_back(std::move(row.back()));
+            row.pop_back();
+        }
+        return removed;
+    }
+
+
     row_container_reference operator[](const size_type pos)
     {
         return _data[pos];
@@ -306,13 +399,20 @@ public:
     }
 
 
-    constexpr row_container_reference at(const size_type i)
+    row_container_reference at(const size_type i)
     {
+        if (_mode != mtx::mode::dynamically_expandable || i < _rows) return _data.at(i);
+
+        if (i == _rows)
+        {
+            _data.emplace_back(_columns, value_type{});
+            ++_rows;
+        }
         return _data.at(i);
     }
 
 
-    constexpr const_row_container_reference at(const size_type i) const
+    const_row_container_reference at(const size_type i) const
     {
         return _data.at(i);
     }
@@ -337,32 +437,13 @@ public:
     }
 
 
-    row_container_reference at(const size_type i)
-    {
-        if (_mode != mtx::mode::dynamically_expandable || i < _rows) return _data.at(i);
-
-        if (i == _rows)
-        {
-            _data.emplace_back(_columns, value_type{});
-            ++_rows;
-        }
-        return _data.at(i);
-    }
-
-
-    const_row_container_reference at(const size_type i) const
-    {
-        return _data.at(i);
-    }
-
-
     matrix& operator+=(const matrix& rhs) noexcept
     {
         for (size_type i = 0; i < _rows; ++i)
         {
             for (size_type j = 0; j < _columns; ++j)
             {
-                _data.at(i).at(j) += rhs(i, j);
+                _data.at(i).at(j) += rhs.at(i, j);
             }
         }
         return *this;
@@ -375,14 +456,14 @@ public:
         {
             for (size_type j = 0; j < _columns; ++j)
             {
-                _data.at(i).at(j) -= rhs(i, j);
+                _data.at(i).at(j) -= rhs.at(i, j);
             }
         }
         return *this;
     }
     
 
-    matrix& operator*=(const value_type value) noexcept
+    matrix& operator*=(const value_type& value) noexcept
     {
         for (auto& row : _data)
         {
@@ -395,10 +476,9 @@ public:
     }
     
 
-    matrix& operator/=(const value_type value)
+    matrix& operator/=(const value_type& value)
     {
         assert(value != value_type{});
-
         for (auto& row : _data)
         {
             for (auto& elem : row)
@@ -477,7 +557,7 @@ public:
 
     value_type calculate_condition_number() const noexcept
     {
-        constexpr auto abs_plus = [](const value_type a, const value_type b)
+        constexpr auto abs_plus = [](const value_type& a, const value_type& b)
         {
             return cx::abs(a) + cx::abs(b);
         };
@@ -531,7 +611,7 @@ public:
 
 
 private:
-    auto _exp_helper(const matrix& mat, const int value) const
+    auto _exp_helper(const matrix& mat, const int& value) const
     {
         if (value == 0)
         { 
@@ -596,38 +676,35 @@ std::istream& operator>>(std::istream& is, matrix<value_type>& mat)
 
 
 template <class value_type>
-constexpr matrix<value_type> operator-(const matrix<value_type>& mat)
+constexpr matrix<value_type> operator-(matrix<value_type> mat)
 {
-    return -1.0 * mat;
+    return mat *= static_cast<value_type>(-1);
 }
 
 
 template <class value_type>
-matrix<value_type> operator+(const matrix<value_type>& lhs, const matrix<value_type>& rhs)
+matrix<value_type> operator+(matrix<value_type> lhs, const matrix<value_type>& rhs)
 {
-    matrix<value_type> temp(lhs);
-    return temp += rhs;
+    return lhs += rhs;
 }
 
 
 template <class value_type>
-matrix<value_type> operator-(const matrix<value_type>& lhs, const matrix<value_type>& rhs)
+matrix<value_type> operator-(matrix<value_type> lhs, const matrix<value_type>& rhs)
 {
-    matrix<value_type> temp(lhs);
-    return temp -= rhs;
+    return lhs -= rhs;
 }
 
 
 template <class value_type>
-matrix<value_type> operator*(const matrix<value_type>& mat, const value_type value)
+matrix<value_type> operator*(matrix<value_type> mat, const value_type& value)
 {
-    matrix<value_type> temp(mat);
-    return temp *= value;
+    return mat *= value;
 }
 
 
 template <class value_type>
-matrix<value_type> operator*(const value_type value, const matrix<value_type>& mat)
+matrix<value_type> operator*(const value_type& value, const matrix<value_type>& mat)
 {
     return mat * value;
 }
@@ -669,12 +746,10 @@ matrix<value_type> operator*(const matrix<value_type>& lhs, const matrix<value_t
 
 
 template <class value_type>
-matrix<value_type> operator/(const matrix<value_type>& mat, const value_type value)
+matrix<value_type> operator/(matrix<value_type> mat, const value_type& value)
 {
     assert(value != value_type{});
-
-    matrix<value_type> temp(mat);
-    return temp /= value;
+    return mat /= value;
 }
 
 
@@ -714,79 +789,74 @@ bool operator!=(const matrix<value_type>& lhs, const matrix<value_type>& rhs) no
 /// Helpers operation
 template <class value_type>
 detail::matrix::container<value_type>
-    operator+(const detail::matrix::container<value_type>& lhs,
+    operator+(detail::matrix::container<value_type> lhs,
               const detail::matrix::container<value_type>& rhs)
 {
     using size_type = typename matrix<value_type>::size_type;
 
-    detail::matrix::container<value_type> temp(lhs);
-    for (size_type i = 0; i < temp.size(); ++i)
+    for (size_type i = 0; i < lhs.size(); ++i)
     {
-        temp.at(i) += rhs.at(i);
+        lhs.at(i) += rhs.at(i);
     }
-    return temp;
+    return lhs;
 }
 
 
 template <class value_type>
 detail::matrix::container<value_type>
-    operator+(const detail::matrix::container<value_type>& cont, const value_type& value)
+    operator+(detail::matrix::container<value_type> cont, const value_type& value)
 {
-    detail::matrix::container<value_type> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem += value;
     }
-    return temp;
+    return cont;
 }
 
 template <class value_type>
 detail::matrix::container<value_type>
     operator+(const value_type& value, const detail::matrix::container<value_type>& cont)
 {
-    return operator+(cont, value);
+    return cont + value;
 }
 
 
 template <class value_type>
 detail::matrix::container<value_type>
-    operator-(const detail::matrix::container<value_type>& lhs,
+    operator-(detail::matrix::container<value_type> lhs,
               const detail::matrix::container<value_type>& rhs)
 {
     using size_type = typename matrix<value_type>::size_type;
 
-    detail::matrix::container<value_type> temp(lhs);
-    for (size_type i = 0; i < temp.size(); ++i)
+    for (size_type i = 0; i < lhs.size(); ++i)
     {
-        temp.at(i) -= rhs.at(i);
+        lhs.at(i) -= rhs.at(i);
     }
-    return temp;
+    return lhs;
 }
 
 
 template <class value_type>
 detail::matrix::container<value_type>
-    operator-(const detail::matrix::container<value_type>& cont, const value_type& value)
+    operator-(detail::matrix::container<value_type> cont, const value_type& value)
 {
-    detail::matrix::container<value_type> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem -= value;
     }
-    return temp;
+    return cont;
 }
 
 
 template <class value_type>
 detail::matrix::container<value_type>
-    operator*(const detail::matrix::container<value_type>& cont, const value_type& value)
+    operator*(detail::matrix::container<value_type> cont, const value_type& value)
 {
-    detail::matrix::container<value_type> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem *= value;
     }
-    return temp;
+    return cont;
 }
 
 
@@ -800,16 +870,15 @@ detail::matrix::container<value_type>
 
 template <class value_type>
 detail::matrix::container<value_type>
-    operator/(const detail::matrix::container<value_type>& cont, const value_type& value)
+    operator/(detail::matrix::container<value_type> cont, const value_type& value)
 {
     assert(value != value_type{});
 
-    detail::matrix::container<value_type> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem /= value;
     }
-    return temp;
+    return cont;
 }
 
 } // namespace vv

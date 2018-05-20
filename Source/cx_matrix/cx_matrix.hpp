@@ -17,7 +17,8 @@
 
 /*
  *
- * As base for cx_matrix class using https://github.com/akalicki/matrix
+ * TODO:
+ * 1) Take out several functions (like gauss method) in a separate library.
  *
  */
 
@@ -52,11 +53,13 @@ public:
 
     static constexpr value_type EPS = static_cast<value_type>(1e-10);
 
+
     static_assert(std::is_arithmetic_v<value_type>, "Matrix elements type has to be arithmetic!");
     static_assert(Rows > 0 && Columns > 0, "Incorrect size parameters!");
 
 
     constexpr cx_matrix() noexcept = default;
+
 
     constexpr cx_matrix(const value_type value) noexcept
     : _data()
@@ -124,73 +127,73 @@ public:
     }
 
 
-    constexpr decltype(auto) begin() noexcept
+    constexpr typename data_container::iterator begin() noexcept
     {
         return _data.begin();
     }
 
 
-    constexpr decltype(auto) begin() const noexcept
+    constexpr typename data_container::const_iterator begin() const noexcept
     {
         return _data.begin();
     }
 
 
-    constexpr decltype(auto) cbegin() const noexcept
+    constexpr typename data_container::const_iterator cbegin() const noexcept
     {
         return _data.cbegin();
     }
 
 
-    constexpr decltype(auto) end() noexcept
+    constexpr typename data_container::iterator end() noexcept
     {
         return _data.end();
     }
 
 
-    constexpr decltype(auto) end() const noexcept
+    constexpr typename data_container::const_iterator end() const noexcept
     {
         return _data.end();
     }
 
 
-    constexpr decltype(auto) cend() const noexcept
+    constexpr typename data_container::const_iterator cend() const noexcept
     {
         return _data.cend();
     }
 
 
-    constexpr decltype(auto) rbegin() noexcept
+    constexpr typename data_container::reverse_iterator rbegin() noexcept
     {
         return _data.rbegin();
     }
 
 
-    constexpr decltype(auto) rbegin() const noexcept
+    constexpr typename data_container::const_reverse_iterator rbegin() const noexcept
     {
         return _data.rbegin();
     }
 
 
-    constexpr decltype(auto) crbegin() const noexcept
+    constexpr typename data_container::const_reverse_iterator crbegin() const noexcept
     {
         return _data.crbegin();
     }
 
 
-    constexpr decltype(auto) rend() noexcept
+    constexpr typename data_container::reverse_iterator rend() noexcept
     {
         return _data.rend();
     }
 
 
-    constexpr decltype(auto) rend() const noexcept
+    constexpr typename data_container::const_reverse_iterator rend() const noexcept
     {
         return _data.rend();
     }
 
 
-    constexpr decltype(auto) crend() const noexcept
+    constexpr typename data_container::const_reverse_iterator crend() const noexcept
     {
         return _data.crend();
     }
@@ -214,7 +217,7 @@ public:
     }
 
 
-    constexpr const const_pointer raw_data() const noexcept
+    constexpr const_pointer raw_data() const noexcept
     {
         return _data.data()->data();
     }
@@ -898,39 +901,36 @@ std::istream& operator>>(std::istream& is, cx_matrix<value_type, Rows, Columns>&
 
 template <class value_type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<value_type, Rows, Columns> operator-(
-    const cx_matrix<value_type, Rows, Columns>& mat) noexcept
+    cx_matrix<value_type, Rows, Columns> mat) noexcept
 {
-    return -1.0 * mat;
+    return mat *= static_cast<value_type>(-1);
 }
 
 
 
 template <class value_type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<value_type, Rows, Columns> operator+(
-    const cx_matrix<value_type, Rows, Columns>& lhs,
+    cx_matrix<value_type, Rows, Columns> lhs,
     const cx_matrix<value_type, Rows, Columns>& rhs) noexcept
 {
-    cx_matrix<value_type, Rows, Columns> temp(lhs);
-    return temp += rhs;
+    return lhs += rhs;
 }
 
 
 template <class value_type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<value_type, Rows, Columns> operator-(
-    const cx_matrix<value_type, Rows, Columns>& lhs,
+    cx_matrix<value_type, Rows, Columns> lhs,
     const cx_matrix<value_type, Rows, Columns>& rhs) noexcept
 {
-    cx_matrix<value_type, Rows, Columns> temp(lhs);
-    return temp -= rhs;
+    return lhs -= rhs;
 }
 
 
 template <class value_type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<value_type, Rows, Columns> operator*(
-    const cx_matrix<value_type, Rows, Columns>& mat, const value_type value) noexcept
+    cx_matrix<value_type, Rows, Columns> mat, const value_type value) noexcept
 {
-    cx_matrix<value_type, Rows, Columns> temp(mat);
-    return temp *= value;
+    return mat *= value;
 }
 
 
@@ -977,12 +977,10 @@ constexpr cx_matrix<value_type, Rows_lhs, Columns_rhs> operator*(
 
 template <class value_type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<value_type, Rows, Columns> operator/(
-    const cx_matrix<value_type, Rows, Columns>& mat, const value_type value)
+    cx_matrix<value_type, Rows, Columns> mat, const value_type value)
 {
     //assert(value != value_type{});
-
-    cx_matrix<value_type, Rows, Columns> temp(mat);
-    return temp /= value;
+    return mat /= value;
 }
 
 
@@ -1015,28 +1013,26 @@ constexpr bool operator!=(const cx_matrix<value_type, Rows, Columns>& lhs,
 /// Helpers operation
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator+(const detail::cx_matrix::container<value_type, N>& lhs,
+    operator+(detail::cx_matrix::container<value_type, N> lhs,
               const detail::cx_matrix::container<value_type, N>& rhs) noexcept
 {
-    detail::cx_matrix::container<value_type, N> temp(lhs);
-    for (std::size_t i = 0; i < temp.size(); ++i)
+    for (std::size_t i = 0; i < lhs.size(); ++i)
     {
-        temp.at(i) += rhs.at(i);
+        lhs.at(i) += rhs.at(i);
     }
-    return temp;
+    return lhs;
 }
 
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator+(const detail::cx_matrix::container<value_type, N>& cont,
+    operator+(detail::cx_matrix::container<value_type, N> cont,
               const value_type& value) noexcept
 {
-    detail::cx_matrix::container<value_type, N> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem += value;
     }
-    return temp;
+    return cont;
 }
 
 
@@ -1051,43 +1047,39 @@ constexpr detail::cx_matrix::container<value_type, N>
 
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator-(const detail::cx_matrix::container<value_type, N>& lhs,
+    operator-(detail::cx_matrix::container<value_type, N> lhs,
               const detail::cx_matrix::container<value_type, N>& rhs) noexcept
 {
-    detail::cx_matrix::container<value_type, N> temp(lhs);
-    for (std::size_t i = 0; i < temp.size(); ++i)
+    for (std::size_t i = 0; i < lhs.size(); ++i)
     {
-        temp.at(i) -= rhs.at(i);
+        lhs.at(i) -= rhs.at(i);
     }
-    return temp;
+    return lhs;
 }
 
 
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator-(const detail::cx_matrix::container<value_type, N>& cont,
-              const value_type& value) noexcept
+    operator-(detail::cx_matrix::container<value_type, N> cont, const value_type& value) noexcept
 {
-    detail::cx_matrix::container<value_type, N> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem -= value;
     }
-    return temp;
+    return cont;
 }
 
 
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator*(const detail::cx_matrix::container<value_type, N>& cont,
+    operator*(detail::cx_matrix::container<value_type, N> cont,
               const value_type& value) noexcept
 {
-    detail::cx_matrix::container<value_type, N> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem *= value;
     }
-    return temp;
+    return cont;
 }
 
 
@@ -1102,16 +1094,15 @@ constexpr detail::cx_matrix::container<value_type, N>
 
 template <class value_type, std::size_t N>
 constexpr detail::cx_matrix::container<value_type, N>
-    operator/(const detail::cx_matrix::container<value_type, N>& cont, const value_type& value)
+    operator/(detail::cx_matrix::container<value_type, N> cont, const value_type& value)
 {
     //assert(value != value_type{});
 
-    detail::cx_matrix::container<value_type, N> temp(cont);
-    for (auto& elem : temp)
+    for (auto& elem : cont)
     {
         elem /= value;
     }
-    return temp;
+    return cont;
 }
 
 } // namespace vv
