@@ -43,7 +43,5 @@ add_executable(${EXECUTABLE_NAME}
 
     numerical_mathematics_methods/runge_kutta_methods.hpp
 
-    numerical_mathematics_methods/transmitter.hpp
-
     numerical_mathematics_methods/main.cpp
 )
