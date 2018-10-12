@@ -1,3 +1,5 @@
+// Copyright (C) 2018 Vasily Vasilyev (vasar007@yandex.ru)
+
 #include <iostream>
 
 #include "utils.hpp"

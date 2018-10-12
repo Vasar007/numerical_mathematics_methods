@@ -1,3 +1,5 @@
+// Copyright (C) 2018, need to remove after add constexpr-ness to <algorithm>
+
 #pragma once
 
 #include <algorithm>
