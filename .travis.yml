@@ -1,0 +1,35 @@
+sudo: required
+dist: trusty
+
+language: cpp
+
+os:
+  - linux
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
+  - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+  - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+
+cache:
+  directories:
+    - $HOME/travisCacheDir
+
+branches:
+  only:
+    - master
+    - develop
+
+matrix:
+  fast_finish: true
+
+install:
+  - bash .travis/os_setup.sh
+
+script:
+  - bash .travis/build.sh
