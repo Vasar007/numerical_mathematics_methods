@@ -10,7 +10,6 @@ if ["$TRAVIS_OS_NAME" == "linux"]; then
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
     if ["$TARGET_CPU" == "x86"]; then
-        sudo dpkg --add-architecture i386
         sudo apt-get install -y g++-7-multilib
     fi
 
