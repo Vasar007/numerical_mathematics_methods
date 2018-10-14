@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(numerical_mathematics_methods)
+project(cx_matrix)
 
 # Set compiler options.
 if (MSVC)
