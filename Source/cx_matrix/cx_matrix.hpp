@@ -18,10 +18,8 @@
 
 
 /*
- *
  * TODO:
  * 1) Take out several functions (like gauss method) in a separate library.
- *
  */
 
 namespace vv
