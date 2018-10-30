@@ -15,7 +15,7 @@ namespace vv
 {
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr std::array<cx_matrix<Type, Size, Size>, 2>
     lu_decompose(const cx_matrix<Type, Size, Size>& mat)
 {
@@ -67,7 +67,7 @@ constexpr std::array<cx_matrix<Type, Size, Size>, 2>
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr long rank(const cx_matrix<Type, Size, Size>& mat)
 {
     using size_type = typename cx_matrix<Type, Size, Size>::size_type;
@@ -85,7 +85,7 @@ constexpr long rank(const cx_matrix<Type, Size, Size>& mat)
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr Type lu_determenant(const cx_matrix<Type, Size, Size>& mat)
 {
     using size_type = typename cx_matrix<Type, Size, Size>::size_type;

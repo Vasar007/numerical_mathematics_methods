@@ -30,7 +30,7 @@ constexpr long kMax_iterations_methods = 10'000;
 
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr std::pair<cx_matrix<Type, Size, 1>, long>
     jacobi_solve(const cx_matrix<Type, Size, Size>& A,
                  const cx_matrix<Type, Size, 1>& b,
@@ -79,7 +79,7 @@ constexpr std::pair<cx_matrix<Type, Size, 1>, long>
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr std::pair<cx_matrix<Type, Size, 1>, long>
     seidel_solve(const cx_matrix<Type, Size, Size>& A,
                  const cx_matrix<Type, Size, 1>& b,
@@ -130,7 +130,7 @@ constexpr std::pair<cx_matrix<Type, Size, 1>, long>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<Type, Rows, Columns> generate_matrix() noexcept
 {
     // Alias the size_type.
@@ -155,7 +155,7 @@ constexpr cx_matrix<Type, Rows, Columns> generate_matrix() noexcept
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr cx_matrix<Type, Size, Size> generate_matrix_with_diagonal_predominance() noexcept
 {
     // Alias the size_type.
@@ -184,7 +184,7 @@ constexpr cx_matrix<Type, Size, Size> generate_matrix_with_diagonal_predominance
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr cx_matrix<Type, Rows, Columns> generate_matrix_simmetrical() noexcept
 {
     auto result = generate_matrix<Type, Rows, Columns>();

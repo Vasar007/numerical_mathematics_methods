@@ -10,10 +10,10 @@ namespace vv
 
 /// ===== CONSTANT SECTION =====
 // ===== DATA 0 (base constants) =====
-template <class Type>
+template <typename Type>
 constexpr Type kDefault_eps = static_cast<Type>(1e-6);
 
-template <class Type>
+template <typename Type>
 constexpr Type kRough_eps = static_cast<Type>(1e-3);
 
 constexpr int N = 12;
