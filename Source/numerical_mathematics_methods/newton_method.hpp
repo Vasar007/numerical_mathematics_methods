@@ -266,7 +266,7 @@ constexpr cx_matrix<double, 2, 1> test_x
 
 
 /// ===== FUNCTION SECTION =====
-template <class Type, class Function>
+template <typename Type, typename Function>
 constexpr Type bisection_method(Type xn, Type xk, Function&& f,
                                 const Type eps = kDefault_eps<Type>)
 {
@@ -297,7 +297,7 @@ constexpr Type bisection_method(Type xn, Type xk, Function&& f,
 }
 
 
-template <class Type, class Function>
+template <typename Type, typename Function>
 constexpr std::pair<Type, Type> bisection_localize(Type xn, Type xk, Function&& f,
                                                    const Type eps = kRough_eps<Type>)
 {
@@ -317,7 +317,7 @@ constexpr std::pair<Type, Type> bisection_localize(Type xn, Type xk, Function&& 
 }
 
 
-template <class Type, class Function, class Derivative>
+template <typename Type, typename Function, typename Derivative>
 constexpr std::tuple<Type, Type, long> newton_method(Function&& f, Derivative&& df, Type x0,
                                                      const Type eps = kDefault_eps<Type>)
 {
@@ -334,7 +334,7 @@ constexpr std::tuple<Type, Type, long> newton_method(Function&& f, Derivative&& 
 }
 
 
-template <class Type, class Function, class Derivative>
+template <typename Type, typename Function, typename Derivative>
 constexpr std::tuple<Type, Type, long> newton_method(Function&& f, Derivative&& df, Type xn, Type xk,
                                                const Type eps = kDefault_eps<Type>)
 {
@@ -353,7 +353,7 @@ constexpr std::tuple<Type, Type, long> newton_method(Function&& f, Derivative&& 
 }
 
 
-template <class Type, std::size_t Row>
+template <typename Type, std::size_t Row>
 constexpr Type difference(const cx_matrix<Type, Row, 1>& lhs,
                           const cx_matrix<Type, Row, 1>& rhs) noexcept
 {
@@ -367,7 +367,7 @@ constexpr Type difference(const cx_matrix<Type, Row, 1>& lhs,
 }
 
 
-template <class Type, std::size_t N, class Function, class Derivative>
+template <typename Type, std::size_t N, typename Function, typename Derivative>
 constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0,
                          const Type eps = kDefault_eps<Type>)
@@ -389,7 +389,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
 }
 
 
-template <class Type, std::size_t N, class Function, class Derivative>
+template <typename Type, std::size_t N, typename Function, typename Derivative>
 constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     mod_newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0, long k,
                              const Type eps = kDefault_eps<Type>)
@@ -428,7 +428,7 @@ constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
 
 
 // TODO: fix cycling in automatic calculations.
-template <class Type, std::size_t N, class Function, class Derivative>
+template <typename Type, std::size_t N, typename Function, typename Derivative>
 std::tuple<cx_matrix<Type, N, 1>, long, long>
     mod_newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0, long k,
                              const bool, const Type eps = kDefault_eps<Type>)
@@ -487,7 +487,7 @@ std::tuple<cx_matrix<Type, N, 1>, long, long>
             }
             diverge = true;
 
-            // Not sure that it's work. Begin.
+            // Note Begin: not sure that it's work. 
             if (cycling_heler == iterations_counter - 2)
             {
                 if (!prev_x.empty())
@@ -499,7 +499,7 @@ std::tuple<cx_matrix<Type, N, 1>, long, long>
                 }
             }
             cycling_heler = iterations_counter;
-            // End.
+            // Note End.
 
             x1 = prev_x0;            
         }
@@ -516,7 +516,7 @@ std::tuple<cx_matrix<Type, N, 1>, long, long>
 }
 
 
-template <class Type, std::size_t N, class Function, class Derivative>
+template <typename Type, std::size_t N, typename Function, typename Derivative>
 constexpr std::tuple<cx_matrix<Type, N, 1>, long, long>
     hybrid_newton_method_system(Function&& F, Derivative&& dF, cx_matrix<Type, N, 1> x0,
                                 const long k, const Type eps = kDefault_eps<Type>)

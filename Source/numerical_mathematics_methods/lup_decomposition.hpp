@@ -16,7 +16,7 @@ namespace vv
 {
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Rows_A, std::size_t Columns_A>
+template <typename Type, std::size_t Rows_A, std::size_t Columns_A>
 constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A, 1>, long>
     lup_decompose(cx_matrix<Type, Rows_A, Columns_A> A, const Type eps = kDefault_eps<Type>)
 {
@@ -78,7 +78,7 @@ constexpr std::tuple<cx_matrix<Type, Rows_A, Columns_A>, cx_matrix<Type, Rows_A,
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A>
+template <typename Type, std::size_t Rows, std::size_t Columns_A>
 constexpr auto lup_solve(const cx_matrix<Type, Rows, Columns_A>& mat,
                          const cx_matrix<Type, Rows, 1>& b,
                          const Type eps = kDefault_eps<Type>)
@@ -113,7 +113,7 @@ constexpr auto lup_solve(const cx_matrix<Type, Rows, Columns_A>& mat,
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr Type lup_determenant(const cx_matrix<Type, Size, Size>& mat,
                            const Type eps = kDefault_eps<Type>)
 {
@@ -130,7 +130,7 @@ constexpr Type lup_determenant(const cx_matrix<Type, Size, Size>& mat,
 }
 
 
-template <class Type, std::size_t Size>
+template <typename Type, std::size_t Size>
 constexpr auto lup_invert(const cx_matrix<Type, Size, Size>& mat,
                           const Type eps = kDefault_eps<Type>)
 {

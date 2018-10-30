@@ -53,7 +53,7 @@ constexpr std::array<double, 3> nc_coefficients(const std::array<double, 3>& x,
 
 
 /// ===== FUNCTION SECTION =====
-template <class Function, std::size_t Size>
+template <typename Function, std::size_t Size>
 constexpr double newton_cotes(Function&& f, const double a, const double b,
                               const std::size_t segments, const std::size_t degree,
                               const std::size_t divisor, const std::array<double, Size>& Ci)
@@ -77,7 +77,7 @@ constexpr double newton_cotes(Function&& f, const double a, const double b,
 }
 
 
-template <class Function>
+template <typename Function>
 constexpr double newton_cotes(Function&& f, const double a, const double b,
                               const std::size_t segments, const std::size_t degree)
 {
@@ -111,7 +111,7 @@ constexpr double newton_cotes(Function&& f, const double a, const double b,
 
 
 // Simpsons Rule
-template <class Function>
+template <typename Function>
 double simpsons(Function&& f, const double a, const double b, const std::size_t segments)
 { 
     constexpr std::size_t degree = 2;
@@ -123,7 +123,7 @@ double simpsons(Function&& f, const double a, const double b, const std::size_t 
 
 
 // Simpsons 3/8 Rule
-template <class Function>
+template <typename Function>
 double simpsons_3_8(Function&& f, const double a, const double b, const std::size_t segments)
 {
     constexpr std::size_t degree = 3;
@@ -135,7 +135,7 @@ double simpsons_3_8(Function&& f, const double a, const double b, const std::siz
 
 
 // Booles Rule
-template <class Function>
+template <typename Function>
 double booles(Function&& f, const double a, const double b, const std::size_t segments)
 { 
     constexpr std::size_t degree = 4;
@@ -147,7 +147,7 @@ double booles(Function&& f, const double a, const double b, const std::size_t se
 
 
 // Own weight.
-template <class Function>
+template <typename Function>
 double nc_calculate_with_own_weight(Function&& f, const double a, const double b,
                                     const std::size_t segments)
 {

@@ -19,7 +19,7 @@ namespace detail::lupq
 {
 
 /// ===== ADDITION FUNCTIONAL SECTION =====
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr ::vv::cx_matrix<Type, Rows, Columns>
     lupq_get_u_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
                              const std::size_t rank) noexcept
@@ -66,7 +66,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr ::vv::cx_matrix<Type, Rows, Rows>
     lupq_get_l_solution_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C,
                              const std::size_t rank) noexcept
@@ -125,7 +125,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr ::vv::cx_matrix<Type, Rows, Columns>
     lupq_get_u_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
 {
@@ -143,7 +143,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Columns>
     return result_U;
 }
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr ::vv::cx_matrix<Type, Rows, Rows>
     lupq_get_l_impl(const ::vv::cx_matrix<Type, Rows, Columns>& C) noexcept
 {
@@ -174,7 +174,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows>
 }
 
 
-template <class Type, std::size_t Rows>
+template <typename Type, std::size_t Rows>
 constexpr ::vv::cx_matrix<Type, Rows, Rows>
     lupq_get_p_impl(const ::vv::cx_matrix<Type, Rows, 1>& P) noexcept
 {
@@ -190,7 +190,7 @@ constexpr ::vv::cx_matrix<Type, Rows, Rows>
 }
 
 
-template <class Type, std::size_t Columns>
+template <typename Type, std::size_t Columns>
 constexpr ::vv::cx_matrix<Type, Columns, Columns>
     lupq_get_q_impl(const ::vv::cx_matrix<Type, Columns, 1>& Q) noexcept
 {
@@ -208,7 +208,7 @@ constexpr ::vv::cx_matrix<Type, Columns, Columns>
 
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>,
                      cx_matrix<Type, Columns, 1>, std::size_t, long>
     lupq_decompose(cx_matrix<Type, Rows, Columns> mat)
@@ -268,7 +268,7 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, 1>,
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, Rows>,
                      cx_matrix<Type, Rows, Rows>, cx_matrix<Type, Columns, Columns>, long>
     lupq_get_components(const cx_matrix<Type, Rows, Columns>& mat)
@@ -284,7 +284,7 @@ constexpr std::tuple<cx_matrix<Type, Rows, Columns>, cx_matrix<Type, Rows, Rows>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A>
+template <typename Type, std::size_t Rows, std::size_t Columns_A>
 constexpr cx_matrix<Type, Columns_A, 1>
     lupq_solve(const cx_matrix<Type, Rows, Columns_A>& A,
                const cx_matrix<Type, Rows, 1>& b,
@@ -296,7 +296,7 @@ constexpr cx_matrix<Type, Columns_A, 1>
 }
 
 
-template <class Type, std::size_t Rows, std::size_t Columns_A>
+template <typename Type, std::size_t Rows, std::size_t Columns_A>
 constexpr cx_matrix<Type, Columns_A, 1>
     lupq_solve(const cx_matrix<Type, Rows, Columns_A>& A,
                const cx_matrix<Type, Rows, 1>& b,

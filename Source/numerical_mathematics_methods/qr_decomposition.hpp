@@ -16,7 +16,7 @@ namespace vv
 {
 
 /// ===== FUNCTION SECTION =====
-template <class Type, std::size_t Rows, std::size_t Columns>
+template <typename Type, std::size_t Rows, std::size_t Columns>
 constexpr std::array<cx_matrix<Type, Rows, Columns>, 2>
     qr_decompose(const cx_matrix<Type, Rows, Columns>& mat, const Type eps = kDefault_eps<Type>)
 {

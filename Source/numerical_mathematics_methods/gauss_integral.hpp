@@ -97,7 +97,7 @@ constexpr std::array<double, 3> gauss_coefficients(const std::array<double, 3>& 
 
 
 /// ===== FUNCTION SECTION =====
-template <class Function>
+template <typename Function>
 constexpr double gauss_integral(Function&& f, const double a, const double b,
                                 const std::size_t segments)
 {
@@ -126,7 +126,7 @@ constexpr double gauss_integral(Function&& f, const double a, const double b,
 }
 
 
-template <class Function>
+template <typename Function>
 constexpr double gauss_integral(Function&& f, const double a, const double b,
                                 const std::size_t segments, const std::size_t degree)
 {
@@ -168,7 +168,7 @@ constexpr double gauss_integral(Function&& f, const double a, const double b,
 }
 
 
-template <class Function>
+template <typename Function>
 double gauss_calculate_with_own_weight(Function&& f, const double a, const double b,
                                        const std::size_t segments)
 {
