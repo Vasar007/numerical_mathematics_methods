@@ -10,7 +10,7 @@
 namespace utils
 {
 
-template <typename OutputStream, typename Container>
+template <class OutputStream, class Container>
 void print(OutputStream& out, const Container& container)
 {
     std::copy(std::begin(container), std::end(container),
@@ -18,7 +18,7 @@ void print(OutputStream& out, const Container& container)
 }
 
 
-template <typename OutputStream, typename Container>
+template <class OutputStream, class Container>
 void println(OutputStream& out, const Container& container)
 {
     std::copy(std::begin(container), std::end(container),

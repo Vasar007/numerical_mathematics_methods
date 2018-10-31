@@ -17,13 +17,11 @@
 
 
 /*
- *
  * TODO:
  * 1) Improved performance for case when work_mode == mtx::normal. I mean that in this case we don't
  *    need in vector of vectors and can use only single vector. For this idea need to add some
  *    checks in all methods that work with data_container. Also need to banned all dynamically
  *    methods for user.
- *
  */
 
 namespace vv
