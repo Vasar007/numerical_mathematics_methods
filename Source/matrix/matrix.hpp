@@ -40,7 +40,7 @@ enum class mode
 } // namespace mtx
 
     
-template <typename Type = double>
+template <class Type = double>
 class matrix
 {
 public:
@@ -48,7 +48,7 @@ public:
     using size_type                      = std::size_t;
     using difference_type                = std::ptrdiff_t;
 
-    template <typename ContType = value_type>
+    template <class ContType = value_type>
     using container                      = std::vector<ContType>;
 
     using row_container                  = container<value_type>;
@@ -573,7 +573,7 @@ public:
     }
 
 
-    template <typename T = value_type>
+    template <class T = value_type>
     static matrix<T> create_identity(const size_type size)
     {
         matrix<T> temp(size, size);
@@ -598,7 +598,7 @@ public:
     }
 
     
-    template <typename T = value_type>
+    template <class T = value_type>
     static matrix<T> get_error_matrix(const size_type rows, const size_type columns) noexcept
     {
         matrix<T> err_matrix(rows, columns);
@@ -642,12 +642,12 @@ private:
 
 namespace detail::matrix
 {
-    template <typename Type>
+    template <class Type>
     using container = std::vector<Type>;
 } // namespace detail::matrix
 
 
-template <typename value_type>
+template <class value_type>
 std::ostream& operator<<(std::ostream& os, const matrix<value_type>& mat)
 {
     os << '[' << mat.get_dimension() << "]\n";
@@ -661,7 +661,7 @@ std::ostream& operator<<(std::ostream& os, const matrix<value_type>& mat)
 }
 
 
-template <typename value_type>
+template <class value_type>
 std::istream& operator>>(std::istream& is, matrix<value_type>& mat)
 {
     for (auto& row : mat)
@@ -675,41 +675,41 @@ std::istream& operator>>(std::istream& is, matrix<value_type>& mat)
 }
 
 
-template <typename value_type>
+template <class value_type>
 constexpr matrix<value_type> operator-(matrix<value_type> mat)
 {
     return mat *= static_cast<value_type>(-1);
 }
 
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator+(matrix<value_type> lhs, const matrix<value_type>& rhs)
 {
     return lhs += rhs;
 }
 
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator-(matrix<value_type> lhs, const matrix<value_type>& rhs)
 {
     return lhs -= rhs;
 }
 
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator*(matrix<value_type> mat, const value_type& value)
 {
     return mat *= value;
 }
 
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator*(const value_type& value, const matrix<value_type>& mat)
 {
     return mat * value;
 }
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator*(const matrix<value_type>& lhs, const matrix<value_type>& rhs)
 {
     using size_type = typename matrix<value_type>::size_type;
@@ -745,7 +745,7 @@ matrix<value_type> operator*(const matrix<value_type>& lhs, const matrix<value_t
 }
 
 
-template <typename value_type>
+template <class value_type>
 matrix<value_type> operator/(matrix<value_type> mat, const value_type& value)
 {
     assert(value != value_type{});
@@ -753,7 +753,7 @@ matrix<value_type> operator/(matrix<value_type> mat, const value_type& value)
 }
 
 
-template <typename value_type>
+template <class value_type>
 bool operator==(const matrix<value_type>& lhs, const matrix<value_type>& rhs) noexcept
 {
     using size_type = typename matrix<value_type>::size_type;
@@ -775,7 +775,7 @@ bool operator==(const matrix<value_type>& lhs, const matrix<value_type>& rhs) no
 }
 
 
-template <typename value_type>
+template <class value_type>
 bool operator!=(const matrix<value_type>& lhs, const matrix<value_type>& rhs) noexcept
 {
     if (lhs.get_rows_number() != rhs.get_rows_number())
@@ -787,7 +787,7 @@ bool operator!=(const matrix<value_type>& lhs, const matrix<value_type>& rhs) no
 
 
 /// Helpers operation
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator+(detail::matrix::container<value_type> lhs,
               const detail::matrix::container<value_type>& rhs)
@@ -802,7 +802,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator+(detail::matrix::container<value_type> cont, const value_type& value)
 {
@@ -813,7 +813,7 @@ detail::matrix::container<value_type>
     return cont;
 }
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator+(const value_type& value, const detail::matrix::container<value_type>& cont)
 {
@@ -821,7 +821,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator-(detail::matrix::container<value_type> lhs,
               const detail::matrix::container<value_type>& rhs)
@@ -836,7 +836,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator-(detail::matrix::container<value_type> cont, const value_type& value)
 {
@@ -848,7 +848,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator*(detail::matrix::container<value_type> cont, const value_type& value)
 {
@@ -860,7 +860,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator*(const value_type& value, const detail::matrix::container<value_type>& cont)
 {
@@ -868,7 +868,7 @@ detail::matrix::container<value_type>
 }
 
 
-template <typename value_type>
+template <class value_type>
 detail::matrix::container<value_type>
     operator/(detail::matrix::container<value_type> cont, const value_type& value)
 {
