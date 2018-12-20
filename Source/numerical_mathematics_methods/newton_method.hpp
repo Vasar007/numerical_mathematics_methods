@@ -598,13 +598,13 @@ TEST_METHOD(newton_test_solve_system)
     const auto newton_solve_system = newton_method_system(nonlinear_matrix, jacobi_matrix,
                                                           vector_x, kEps);
     std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
-    std::cout << "Calculation time: " << duration.count() << " ms\n";
+    std::cout << "Calculation time: " << duration.count() << " s\n";
 
     const auto answer = std::get<0>(newton_solve_system);
     const auto iterations = std::get<1>(newton_solve_system);
     const auto complexity = std::get<2>(newton_solve_system);
-    //std::cout << "Epsilon = " << kEps << '\n';
-    //std::cout << "x0:\n" << vector_x << "\n\n";
+    std::cout << "Epsilon = " << kEps << '\n';
+    std::cout << "x0:\n" << vector_x << "\n\n";
     std::cout << "Answer:\n" << answer << "\n\n";
     std::cout << "Number of iterations = " << iterations << '\n';
     std::cout << "Number of operations = " << complexity;
@@ -632,22 +632,22 @@ TEST_METHOD(mod_newton_test_solve_system)
                                                                       jacobi_matrix, vector_x,
                                                                       k, kEps);
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
-        std::cout << k << " Calculation time: " << duration.count() << " ms\n";
+        std::cout << k << " Calculation time: " << duration.count() << " s\n";
 
         const auto answer = std::get<0>(mod_newton_solve_system);
         const auto iterations = std::get<1>(mod_newton_solve_system);
         const auto complexity = std::get<2>(mod_newton_solve_system);
-        //std::cout << "Epsilon = " << kEps << '\n';
-        //std::cout << "x0:\n" << vector_x << "\n\n";
+        std::cout << "Epsilon = " << kEps << '\n';
+        std::cout << "x0:\n" << vector_x << "\n\n";
         std::cout << "Answer:\n" << answer << "\n\n";
         std::cout << "Number of iterations = " << iterations << '\n';
         std::cout << "Number of operations = " << complexity;
         std::cout << "\n\n------------------------------------\n\n";
 
-        //std::cout << "Checking modified Newton solve (include eps = " << kEps << "):\n\n";
-        //const auto newton_solve_check = nonlinear_matrix(answer);
-        //std::cout << "Result of F(Answer): " << newton_solve_check;
-        //std::cout << "\n\n------------------------------------\n\n";
+        std::cout << "Checking modified Newton solve (include eps = " << kEps << "):\n\n";
+        const auto newton_solve_check = nonlinear_matrix(answer);
+        std::cout << "Result of F(Answer): " << newton_solve_check;
+        std::cout << "\n\n------------------------------------\n\n";
     }
 }
 
@@ -668,22 +668,22 @@ TEST_METHOD(hybrid_newton_test_solve_system)
                                                                             jacobi_matrix,
                                                                             vector_x, k, kEps);
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - start;
-        std::cout << k << " Calculation time: " << duration.count() << " ms\n";
+        std::cout << k << " Calculation time: " << duration.count() << " s\n";
 
         const auto answer = std::get<0>(hybrid_newton_solve_system);
         const auto iterations = std::get<1>(hybrid_newton_solve_system);
         const auto complexity = std::get<2>(hybrid_newton_solve_system);
-        //std::cout << "Epsilon = " << kEps << '\n';
-        //std::cout << "x0:\n" << vector_x << "\n\n";
+        std::cout << "Epsilon = " << kEps << '\n';
+        std::cout << "x0:\n" << vector_x << "\n\n";
         std::cout << "Answer:\n" << answer << "\n\n";
         std::cout << "Number of iterations = " << iterations << '\n';
         std::cout << "Number of operations = " << complexity;
         std::cout << "\n\n------------------------------------\n\n";
 
-        //std::cout << "Checking hybrid Newton solve (include eps = " << kEps << "):\n\n";
-        //const auto newton_solve_check = nonlinear_matrix(answer);
-        //std::cout << "Result of F(Answer): " << newton_solve_check;
-        //std::cout << "\n\n------------------------------------\n\n";
+        std::cout << "Checking hybrid Newton solve (include eps = " << kEps << "):\n\n";
+        const auto newton_solve_check = nonlinear_matrix(answer);
+        std::cout << "Result of F(Answer): " << newton_solve_check;
+        std::cout << "\n\n------------------------------------\n\n";
     }
 }
 
